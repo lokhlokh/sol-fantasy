@@ -269,10 +269,10 @@ export default function LineupPage() {
                         </div>
                         <p className="text-xs font-semibold text-slate-500">{team?.name ?? player.teamId} · {playerValueLabel(player)}</p>
                       </div>
-                      <button type="button" onClick={() => setRecruitSlot(index)} className="rounded-md bg-ink px-3 py-2 text-xs font-black text-white">새 선수 영입</button>
+                      <button type="button" onClick={() => setRecruitSlot(index)} className="rounded-md bg-ink px-3 py-2 text-xs font-black text-white">트레이드</button>
                     </div>
                   ) : (
-                    <button type="button" onClick={() => setRecruitSlot(index)} className="w-full rounded-md border border-dashed border-slate-300 bg-white p-4 text-sm font-black text-slate-600">새 선수 영입</button>
+                    <button type="button" onClick={() => setRecruitSlot(index)} className="w-full rounded-md border border-dashed border-slate-300 bg-white p-4 text-sm font-black text-slate-600">트레이드</button>
                   )}
                 </div>
               );
@@ -335,7 +335,7 @@ export default function LineupPage() {
                       </div>
                       <p className="text-xs font-semibold text-red-700">{injury.status} · {injury.note}</p>
                     </div>
-                    <button type="button" onClick={() => setRecruitSlot(slotIndex)} className="rounded-md bg-red-700 px-3 py-2 text-xs font-black text-white">교체</button>
+                    <button type="button" onClick={() => setRecruitSlot(slotIndex)} className="rounded-md bg-red-700 px-3 py-2 text-xs font-black text-white">트레이드</button>
                   </div>
                 );
               })}
@@ -360,7 +360,7 @@ export default function LineupPage() {
             <section className="max-h-[78vh] w-full overflow-auto rounded-t-xl bg-white p-4">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs font-bold text-slate-500">새 선수 영입</p>
+                  <p className="text-xs font-bold text-slate-500">트레이드</p>
                   <h3 className="text-xl font-black">{slotLabel(recruitingPosition, recruitSlot)}</h3>
                 </div>
                 <button type="button" onClick={() => setRecruitSlot(null)} className="rounded-md border border-slate-200 px-3 py-2 text-sm font-bold">닫기</button>
