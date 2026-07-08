@@ -410,7 +410,6 @@ export default function HomePage() {
       )}
       <span>
         {fantasyTeamName}의 덕아웃
-        <span className="ml-1 text-sm font-black text-slate-600">(단장: {managerId})</span>
       </span>
     </span>
   );
