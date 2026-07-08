@@ -205,7 +205,7 @@ function EtfAdBox() {
   return (
     <section className="rounded-lg border border-blue-100 bg-blue-50 p-3">
       <div className="mb-2 flex items-center justify-between gap-3">
-        <h2 className="font-black text-ink">지난 5일 최고 수익률 ETF</h2>
+        <h2 className="font-black text-ink">지난 5일간 최고 수익률 ETF</h2>
         <span className="rounded bg-white px-2 py-1 text-[10px] font-black text-sol">모의 광고</span>
       </div>
       <div className="rounded-md bg-white p-3">
@@ -312,7 +312,7 @@ export default function HomePage() {
         <div className="pt-2">
           <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-sol">지난 5일 분석</p>
           <div className="space-y-3">
-            <InsightSection title="가장 효과적이었을 작전">
+            <InsightSection title="최고의 작전">
               <div className="grid gap-2">
                 {strategyRankings.slice(0, 2).map((row, index) => (
                   <div key={row.id} className="flex items-center justify-between gap-3 rounded-md bg-slate-50 p-3 text-sm">
@@ -358,7 +358,7 @@ export default function HomePage() {
             </InsightSection>
 
             {worstPlayer && (
-              <InsightSection title="주의가 필요한 선수">
+              <InsightSection title="기여가 부족한 선수">
                 <div className="rounded-md bg-red-50 p-3">
                   <div className="flex items-center justify-between gap-3">
                     <p className="font-black text-red-900">{worstPlayer.player.name}</p>
@@ -376,8 +376,10 @@ export default function HomePage() {
           <ModalShell title="오늘의 작전 설정" onClose={() => setModal(null)}>
             <div className="space-y-4">
               <AiRecommendationBox coach="AI 수석코치 추천" title={`작전 1은 ${strategyCards[aiStrategyOne?.id ?? strategyCardId].name}`}>
-                <p>AI 타격코치 추천: 작전 2 후보는 {aiStrategyTwo ? strategyCards[aiStrategyTwo.id].name : "추가 분석 필요"}입니다.</p>
-                <p className="mt-1">지난 5일 기준 보너스 효율을 우선했습니다.</p>
+                <p>지난 5일 기준 보너스 효율을 우선했습니다.</p>
+              </AiRecommendationBox>
+              <AiRecommendationBox coach="AI 타격코치 추천" title={`작전 2 후보는 ${aiStrategyTwo ? strategyCards[aiStrategyTwo.id].name : "추가 분석 필요"}`}>
+                <p>SOL 거래가 있으면 두 번째 작전으로 선택할 수 있습니다.</p>
               </AiRecommendationBox>
               <section>
                 <p className="mb-2 text-sm font-black">작전 1</p>
