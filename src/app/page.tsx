@@ -168,7 +168,7 @@ function StrategyStatusCard({
           </div>
           <p className="mt-1 font-black text-ink">{hasSolTransaction ? bonusStrategy?.name ?? "선택 필요" : "오늘은 SOL 거래가 없었네요"}</p>
           <p className="mt-1 text-sm font-semibold text-slate-600">
-            {hasSolTransaction ? bonusStrategy?.description ?? "작전 설정에서 두 번째 작전을 선택하세요." : "거래를 완료하면 작전 2를 하나 더 선택할 수 있습니다."}
+            {hasSolTransaction ? bonusStrategy?.description ?? "작전 설정에서 두 번째 작전을 선택하세요." : "거래를 완료하면 작전을 하나 더 선택할 수 있습니다."}
           </p>
         </div>
       </div>
@@ -407,7 +407,7 @@ export default function HomePage() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <p className="text-sm font-semibold text-slate-600">오늘은 SOL 거래가 없었네요. SOL 거래를 완료하면 작전 2를 하나 더 선택할 수 있습니다.</p>
+                    <p className="text-sm font-semibold text-slate-600">오늘은 SOL 거래가 없었네요. SOL 거래를 완료하면 작전을 하나 더 선택할 수 있습니다.</p>
                     <button type="button" onClick={() => setSolTransactionToday(true)} className="w-full rounded-lg bg-sol p-3 font-black text-white">
                       지금 SOL 거래하고 작전 2 열기
                     </button>

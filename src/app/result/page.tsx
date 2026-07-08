@@ -292,7 +292,7 @@ export default function ResultPage() {
 
         <section className="space-y-2">
           <div>
-            <h2 className="text-lg font-black text-ink">시즌팀별 어제의 Top 3 단장</h2>
+            <h2 className="text-lg font-black text-ink">팀별 어제의 Top 3 단장</h2>
           </div>
           {top3BySeasonTeam.map(({ team, rows: teamRows }) => (
             <article key={team.id} className="rounded-lg border border-slate-200 p-3">

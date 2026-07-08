@@ -1,11 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { PlayerPortrait } from "@/components/PlayerPortrait";
-import { legendCards, type LegendCard } from "@/data/legendCards";
+import { getLegendCardsForTeam, type LegendCard } from "@/data/legendCards";
 import { positionLabels } from "@/data/labels";
 import { players } from "@/data/players";
 import { teams } from "@/data/teams";
 import { getCardLevel, mockCardProgress } from "@/engine/cardEngine";
+import { useLocalGameState } from "@/store/useLocalGameState";
 import type { TeamId } from "@/types/domain";
 
 const legendCollectionRanking = {
@@ -191,6 +194,9 @@ function ShinhanCardAdSection() {
 }
 
 export default function CardsPage() {
+  const { state } = useLocalGameState();
+  const legendCards = getLegendCardsForTeam(state.seasonTeamId ?? "LG");
+
   return (
     <AppShell title="선수카드">
       <div className="space-y-5">

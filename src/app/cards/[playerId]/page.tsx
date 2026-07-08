@@ -2,14 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { PlayerPortrait } from "@/components/PlayerPortrait";
-import { legendCards, type LegendCard } from "@/data/legendCards";
+import { findLegendCardById, legendCardStaticParams, type LegendCard } from "@/data/legendCards";
 import { positionLabels } from "@/data/labels";
 import { players } from "@/data/players";
 import { teams } from "@/data/teams";
 import { getCardLevel, getCardProgress, mockCardProgress, nextCardGoal } from "@/engine/cardEngine";
 
 export function generateStaticParams() {
-  return [...mockCardProgress.map((progress) => ({ playerId: progress.playerId })), ...legendCards.map((card) => ({ playerId: card.player.id }))];
+  return [...mockCardProgress.map((progress) => ({ playerId: progress.playerId })), ...legendCardStaticParams()];
 }
 
 function LegendDetail({ card }: { card: LegendCard }) {
@@ -201,7 +201,7 @@ function HansotDetail({ playerId }: { playerId: string }) {
 
 export default async function CardDetailPage({ params }: { params: Promise<{ playerId: string }> }) {
   const { playerId } = await params;
-  const legendCard = legendCards.find((card) => card.player.id === playerId);
+  const legendCard = findLegendCardById(playerId);
 
   if (legendCard) return <LegendDetail card={legendCard} />;
 

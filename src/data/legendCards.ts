@@ -1,4 +1,4 @@
-import type { Player } from "@/types/domain";
+import type { Player, TeamId } from "@/types/domain";
 
 export type LegendAnnualRecord = {
   year: number;
@@ -130,3 +130,66 @@ export const legendCards: LegendCard[] = [
     ],
   },
 ];
+
+const legendTeamNames: Record<TeamId, { shortName: string; fullName: string }> = {
+  KIA: { shortName: "KIA", fullName: "KIA 모의 타이거즈" },
+  LG: { shortName: "LG", fullName: "LG 모의 트윈스" },
+  DOOSAN: { shortName: "DS", fullName: "두산 모의 베어스" },
+  SAMSUNG: { shortName: "SS", fullName: "삼성 모의 라이온즈" },
+  SSG: { shortName: "SG", fullName: "SSG 모의 랜더스" },
+  LOTTE: { shortName: "LT", fullName: "롯데 모의 자이언츠" },
+  HANWHA: { shortName: "HW", fullName: "한화 모의 이글스" },
+  NC: { shortName: "NC", fullName: "NC 모의 다이노스" },
+  KIWOOM: { shortName: "KW", fullName: "키움 모의 히어로즈" },
+  KT: { shortName: "KT", fullName: "KT 모의 위즈" },
+};
+
+const legendProfiles = [
+  {
+    suffix: "01",
+    name: "전설타자 10",
+    nickname: "잠실의 4번 타자",
+    story: "중심타선을 오래 책임진 전설의 카드입니다. 선수 기간 전체의 누적 성적과 상징성을 중심으로 보여줍니다.",
+  },
+  {
+    suffix: "02",
+    name: "전설포수 27",
+    nickname: "안방의 지휘자",
+    story: "투수진의 리듬을 읽고, 한 번의 사인과 블로킹으로 경기 흐름을 지켜낸 리더십을 담았습니다.",
+  },
+  {
+    suffix: "03",
+    name: "전설리드오프 33",
+    nickname: "1번 타자의 심장",
+    story: "첫 타석부터 경기장을 흔들고, 빠른 발과 출루로 팀 공격의 템포를 만든 순간들을 담았습니다.",
+  },
+];
+
+export function getLegendCardsForTeam(teamId: TeamId) {
+  const team = legendTeamNames[teamId];
+
+  return legendCards.map((card, index) => {
+    const profile = legendProfiles[index];
+    return {
+      ...card,
+      player: {
+        ...card.player,
+        id: `LEGEND-${teamId}-${profile.suffix}`,
+        name: `${team.shortName} ${profile.name}`,
+        teamId,
+      },
+      nickname: profile.nickname,
+      story: `${team.fullName}의 ${profile.story}`,
+    };
+  });
+}
+
+export function findLegendCardById(playerId: string) {
+  const match = playerId.match(/^LEGEND-([A-Z]+)-0[1-3]$/);
+  if (!match) return undefined;
+  return getLegendCardsForTeam(match[1] as TeamId).find((card) => card.player.id === playerId);
+}
+
+export function legendCardStaticParams() {
+  return (Object.keys(legendTeamNames) as TeamId[]).flatMap((teamId) => getLegendCardsForTeam(teamId).map((card) => ({ playerId: card.player.id })));
+}
