@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { playerValueLabel } from "@/data/playerValue";
@@ -11,10 +11,11 @@ import { strategyCards } from "@/rules/strategyCards";
 import { useLocalGameState } from "@/store/useLocalGameState";
 import type { HitterDailyStats, Lineup, Player, StrategyCardId, TeamId, TeamMoundResult } from "@/types/domain";
 
-type ModalName = "strategy" | "mound" | "hiddenGem" | null;
+type ModalName = "manual" | "strategy" | "mound" | "hiddenGem" | null;
 
 const strategyIds = Object.keys(strategyCards) as StrategyCardId[];
 const teamIds = teams.map((team) => team.id);
+const manualReadKey = "sol-fantasy-manual-read";
 
 function hashText(text: string) {
   return text.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
@@ -238,9 +239,116 @@ function AiRecommendationBox({ coach, title, children }: { coach: string; title:
   );
 }
 
+function ManagerGuideCard({
+  managerName,
+  manualRead,
+  lineupReady,
+  hasSolTransaction,
+  collectedCards,
+  onOpen
+}: {
+  managerName: string;
+  manualRead: boolean;
+  lineupReady: boolean;
+  hasSolTransaction: boolean;
+  collectedCards: number;
+  onOpen: () => void;
+}) {
+  if (!manualRead) {
+    return (
+      <button type="button" onClick={onOpen} className="w-full rounded-lg border border-blue-100 bg-blue-50 p-3 text-left">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-black text-sol">입문자 매뉴얼</p>
+            <h2 className="mt-1 text-lg font-black text-ink">단장 취임을 축하합니다</h2>
+            <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-600">
+              오늘의 작전, 마운드, 히든젬을 정하고 리그 랭킹과 친구 미니리그에서 보상에 도전하는 방법을 먼저 확인해 보세요.
+            </p>
+          </div>
+          <span className="shrink-0 rounded-md bg-sol px-3 py-2 text-xs font-black text-white">시작</span>
+        </div>
+      </button>
+    );
+  }
+
+  const achievements = [
+    { label: "라인업 구성", done: lineupReady },
+    { label: "SOL 작전권", done: hasSolTransaction },
+    { label: "선수카드 수집", done: collectedCards > 0 },
+  ];
+
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-3">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-black text-sol">MY ROOM</p>
+          <h2 className="mt-1 text-lg font-black text-ink">{managerName} 단장의 방</h2>
+          <p className="mt-1 text-sm font-semibold text-slate-600">오늘의 운영 기록과 달성 현황을 모아둡니다.</p>
+        </div>
+        <button type="button" onClick={onOpen} className="shrink-0 rounded-md bg-ink px-3 py-2 text-xs font-black text-white">
+          매뉴얼
+        </button>
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        {achievements.map((item) => (
+          <div key={item.label} className={`rounded-md p-2 text-center text-xs font-black ${item.done ? "bg-blue-50 text-sol" : "bg-slate-100 text-slate-500"}`}>
+            <p>{item.done ? "완료" : "진행중"}</p>
+            <p className="mt-1">{item.label}</p>
+          </div>
+        ))}
+      </div>
+      <button type="button" onClick={onOpen} className="mt-3 w-full rounded-md border border-slate-200 p-2 text-sm font-black text-ink">
+        게임 운영방법 다시 보기
+      </button>
+    </section>
+  );
+}
+
+function ManagerManual({ managerName, onComplete }: { managerName: string; onComplete: () => void }) {
+  const steps = [
+    { title: "1. 라인업을 구성합니다", body: "포수, 내야, 외야 슬롯에 8명을 채우고 캡틴, 부캡틴, 히든젬을 지정합니다. 부상 선수가 있으면 교체해서 점수 손실을 줄입니다." },
+    { title: "2. 오늘의 작전을 선택합니다", body: "작전 1은 기본 선택이고, SOL 거래를 완료하면 작전을 하나 더 선택할 수 있습니다. AI 코치 추천을 참고해 보너스가 큰 작전을 고릅니다." },
+    { title: "3. 오늘의 마운드를 고릅니다", body: "10개 팀의 오늘 상대와 지난 5일간 기록을 보고, 우리 점수에 가장 도움이 될 마운드를 선택합니다." },
+    { title: "4. 히든젬으로 역전을 노립니다", body: "영입밸류가 낮지만 최근 기록이 좋은 선수를 히든젬으로 고르면 예상보다 큰 보너스를 얻을 수 있습니다." },
+    { title: "5. 리그 랭킹과 친구 미니리그에 도전합니다", body: "일별, 월별, 시즌별 랭킹에서 상품을 노리고, 친구 미니리그에서는 순위 변화 그래프로 경쟁 흐름을 확인합니다." },
+    { title: "6. 야구지식과 보상을 함께 겨룹니다", body: "선수 컨디션, 상대 팀, 작전 궁합을 읽는 야구지식이 좋은 라인업으로 이어지고, 좋은 라인업은 보상권에 가까워집니다." },
+  ];
+
+  return (
+    <div className="space-y-3">
+      <section className="rounded-lg bg-blue-50 p-3">
+        <p className="text-xs font-black text-sol">WELCOME</p>
+        <h3 className="mt-1 text-xl font-black text-ink">{managerName} 단장님, 취임을 축하합니다</h3>
+        <p className="mt-2 text-sm font-semibold leading-relaxed text-slate-600">
+          이 게임은 매일 KBO 데이터를 읽고 작전, 라인업, 마운드, 히든젬을 선택해 친구와 리그 단장들과 겨루는 판타지 야구 운영 게임입니다.
+        </p>
+      </section>
+
+      {steps.map((step) => (
+        <section key={step.title} className="rounded-lg border border-slate-200 p-3">
+          <h4 className="font-black text-ink">{step.title}</h4>
+          <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-600">{step.body}</p>
+        </section>
+      ))}
+
+      <section className="rounded-lg bg-amber-50 p-3">
+        <p className="font-black text-ink">운영 팁</p>
+        <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-700">
+          덕아웃에서 오늘의 방향을 정하고, 라인업에서 선수를 관리한 뒤, 스탯과 리그 랭킹으로 결과를 복기하면 다음 날 더 좋은 선택을 할 수 있습니다.
+        </p>
+      </section>
+
+      <button type="button" onClick={onComplete} className="w-full rounded-lg bg-sol p-3 font-black text-white">
+        매뉴얼 확인 완료
+      </button>
+    </div>
+  );
+}
+
 export default function HomePage() {
   const { state, setStrategy, setBonusStrategy, setSolTransactionToday, setHiddenGem } = useLocalGameState();
   const [modal, setModal] = useState<ModalName>(null);
+  const [manualRead, setManualRead] = useState(false);
   const team = teams.find((item) => item.id === state.seasonTeamId);
   const fantasyTeamName = state.fantasyTeamName ?? "AI킬러";
   const managerId = state.managerNickname ?? "홍길동";
@@ -281,6 +389,16 @@ export default function HomePage() {
   const celebrationCaptainId = topPlayers[0]?.player.id ?? state.lineup?.captainId;
   const celebrationHiddenGemId = topPlayers.find(({ player }) => player.id !== celebrationCaptainId && player.priceStars <= 3)?.player.id ?? topPlayers.find(({ player }) => player.id !== celebrationCaptainId)?.player.id ?? state.lineup?.hiddenGemId;
 
+  useEffect(() => {
+    setManualRead(window.localStorage.getItem(manualReadKey) === "done");
+  }, []);
+
+  const completeManual = () => {
+    window.localStorage.setItem(manualReadKey, "done");
+    setManualRead(true);
+    setModal(null);
+  };
+
   const title = (
     <span className="flex flex-wrap items-center gap-2">
       <span>{todayLabel()}</span>
@@ -299,6 +417,14 @@ export default function HomePage() {
   return (
     <AppShell title={title}>
       <div className="space-y-3">
+        <ManagerGuideCard
+          managerName={managerId}
+          manualRead={manualRead}
+          lineupReady={Boolean(state.lineup)}
+          hasSolTransaction={hasSolTransaction}
+          collectedCards={3}
+          onOpen={() => setModal("manual")}
+        />
         <StrategyStatusCard strategyCard={strategyCard} bonusStrategy={bonusStrategy} hasSolTransaction={hasSolTransaction} onOpen={() => setModal("strategy")} />
         <DugoutCard title="오늘의 마운드" value={moundTeam?.name ?? "마운드 미설정"} detail={`오늘 상대: ${todayOpponent.name}. 지난 5일간 기록을 보고 선택하세요.`} testId="open-mound-modal" onOpen={() => setModal("mound")} />
         <DugoutCard
@@ -371,6 +497,12 @@ export default function HomePage() {
             <EtfAdBox />
           </div>
         </div>
+
+        {modal === "manual" && (
+          <ModalShell title={manualRead ? `${managerId} 단장의 매뉴얼` : "단장 취임 매뉴얼"} onClose={() => setModal(null)}>
+            <ManagerManual managerName={managerId} onComplete={completeManual} />
+          </ModalShell>
+        )}
 
         {modal === "strategy" && (
           <ModalShell title="오늘의 작전 설정" onClose={() => setModal(null)}>
