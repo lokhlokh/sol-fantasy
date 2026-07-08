@@ -94,6 +94,7 @@ export default function LineupPage() {
   const selectedPlayers = useMemo(() => selected.map((id) => players.find((player) => player.id === id)).filter(Boolean) as Player[], [selectedKey]);
   const hiddenGemCandidates = selectedPlayers.filter((player) => player.priceStars <= 3);
   const hiddenGemCandidateKey = hiddenGemCandidates.map((player) => player.id).join("|");
+  const selectedRoleCount = [captainId, viceCaptainId, hiddenGemId].filter(Boolean).length;
   const selectedTeam = teams.find((team) => team.id === seasonTeamId);
   const fantasyTeamName = state.fantasyTeamName ?? "AI킬러";
   const injuredRows = slotPlayerIds
@@ -283,7 +284,7 @@ export default function LineupPage() {
         <section className="rounded-lg border border-slate-200 p-3">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-black">캡틴 · 부캡틴 · 히든젬</h2>
-            <span className="text-xs font-bold text-slate-500">{selected.length}/8명 선택</span>
+            <span className="text-xs font-bold text-slate-500">{selectedRoleCount}/3명 선택</span>
           </div>
           <div className="grid gap-2">
             <label className="grid gap-1 text-sm font-bold">
@@ -308,7 +309,9 @@ export default function LineupPage() {
               </select>
             </label>
           </div>
-          <p className="mt-3 text-xs font-semibold text-slate-500">히든젬은 영입밸류 3별 이하 선수만 가능하며 캡틴, 부캡틴과 겹칠 수 없습니다. 변경 내용은 유효한 라인업일 때 자동 저장됩니다.</p>
+          <p className="mt-3 text-xs font-semibold leading-relaxed text-slate-500">
+            캡틴은 해당 선수 점수를 2배로 키우고, 부캡틴과 히든젬은 추가 보너스를 받습니다. 히든젬은 낮은 영입밸류 선수의 깜짝 활약을 노리는 선택으로, 영입밸류 3별 이하 선수만 가능하며 캡틴, 부캡틴과 겹칠 수 없습니다. 변경 내용은 유효한 라인업일 때 자동 저장됩니다.
+          </p>
         </section>
 
         {!validation.valid && <p className="rounded-lg bg-red-50 p-3 text-sm font-semibold text-red-700">{validation.errors.map((error) => rosterErrorMessages[error]).join(" ")}</p>}
