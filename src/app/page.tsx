@@ -283,7 +283,6 @@ function ManagerGuideCard({
         <div>
           <p className="text-xs font-black text-sol">MY ROOM</p>
           <h2 className="mt-1 text-lg font-black text-ink">{managerName} 단장의 방</h2>
-          <p className="mt-1 text-sm font-semibold text-slate-600">오늘의 운영 기록과 달성 현황을 모아둡니다.</p>
         </div>
         <button type="button" onClick={onOpen} className="shrink-0 rounded-md bg-ink px-3 py-2 text-xs font-black text-white">
           매뉴얼
@@ -296,6 +295,11 @@ function ManagerGuideCard({
             <p className="mt-1">{item.label}</p>
           </div>
         ))}
+      </div>
+      <div className="mt-3 space-y-1 rounded-md bg-slate-50 p-3 text-xs font-bold leading-relaxed text-slate-700">
+        <p>이번 주 최고 운영: 185점, LG 모의 트윈스 일간 랭킹 12위</p>
+        <p>레전드 카드 수집: {collectedCards}장, 미디어데이 초청권까지 6장</p>
+        <p>친구 미니리그: 최근 10일간 4계단 상승, 1위와 18점 차</p>
       </div>
     </section>
   );
