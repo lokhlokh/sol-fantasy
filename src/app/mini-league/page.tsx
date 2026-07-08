@@ -384,7 +384,7 @@ function ShinhanEtfAdSection() {
     <section className="rounded-lg border border-slate-200 p-3">
       <div className="mb-3">
         <p className="text-xs font-black text-sol">신한투자증권</p>
-        <h2 className="text-lg font-black text-ink">최근 5일간 최대매출 ETF Top 3</h2>
+        <h2 className="text-lg font-black text-ink">최근 5일간 최대매출 ETF 랭킹 Top 3</h2>
       </div>
       <div className="space-y-2">
         {etfTop3.map((etf, index) => (
