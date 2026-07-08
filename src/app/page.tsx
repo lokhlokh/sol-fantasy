@@ -297,9 +297,6 @@ function ManagerGuideCard({
           </div>
         ))}
       </div>
-      <button type="button" onClick={onOpen} className="mt-3 w-full rounded-md border border-slate-200 p-2 text-sm font-black text-ink">
-        게임 운영방법 다시 보기
-      </button>
     </section>
   );
 }
