@@ -442,7 +442,7 @@ export default function MiniLeaguePage() {
           }
           customGapMessage={(gap, mine) =>
             <>
-              {mine.rank}위 {mine.nickname} 단장님은 {gap}점을 더 받으시면 포스트시즌 SOL 판타지리그에 함께 합니다. 1위까지 오르셔서 스프링캠프에 동행하시고 단장님의 야구 철학을 <SeasonTeamName teamId={seasonTeamId} />에게 직접 들려주세요.
+              {mine.rank}위 {mine.nickname} 단장님은 {gap}점을 더 받으면 포스트시즌 SOL 판타지리그에 함께 합니다. 1위까지 올라서 스프링캠프에 동행하고 단장님의 야구 철학을 <SeasonTeamName teamId={seasonTeamId} />에게 직접 들려주세요.
             </>
           }
         />
