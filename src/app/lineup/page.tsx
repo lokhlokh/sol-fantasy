@@ -87,6 +87,7 @@ export default function LineupPage() {
   const [viceCaptainId, setViceCaptainId] = useState(state.lineup?.viceCaptainId ?? "");
   const [hiddenGemId, setHiddenGemId] = useState(state.lineup?.hiddenGemId ?? "");
   const [recruitSlot, setRecruitSlot] = useState<number | null>(null);
+  const [clearedInjurySlots, setClearedInjurySlots] = useState<number[]>([]);
 
   const selected = slotPlayerIds.filter(Boolean);
   const selectedKey = selected.join("|");
@@ -99,7 +100,7 @@ export default function LineupPage() {
     .map((id, slotIndex) => {
       const player = players.find((item) => item.id === id);
       const injury = player ? mockInjuryForPlayer(player, slotIndex) : null;
-      return player && injury ? { player, injury, slotIndex } : null;
+      return player && injury && !clearedInjurySlots.includes(slotIndex) ? { player, injury, slotIndex } : null;
     })
     .filter(Boolean) as Array<{ player: Player; injury: { status: string; note: string; severity: string }; slotIndex: number }>;
 
@@ -162,6 +163,7 @@ export default function LineupPage() {
         ? roles.hiddenGemId
         : nextAvailable(hiddenCandidates, [nextCaptainId, nextViceCaptainId]);
     setSlotPlayerIds(arranged);
+    setClearedInjurySlots([]);
     setCaptainId(nextCaptainId);
     setViceCaptainId(nextViceCaptainId);
     setHiddenGemId(nextHiddenGemId);
@@ -188,12 +190,14 @@ export default function LineupPage() {
     const lineup = originalLineup.current;
     if (!lineup) {
       setSlotPlayerIds(arrangeIdsForSlots([]));
+      setClearedInjurySlots([]);
       setCaptainId("");
       setViceCaptainId("");
       setHiddenGemId("");
       return;
     }
     setSlotPlayerIds(arrangeIdsForSlots(lineup.playerIds));
+    setClearedInjurySlots([]);
     setCaptainId(lineup.captainId);
     setViceCaptainId(lineup.viceCaptainId);
     setHiddenGemId(lineup.hiddenGemId);
@@ -201,16 +205,24 @@ export default function LineupPage() {
   };
 
   const recruitPlayer = (slotIndex: number, playerId: string) => {
+    const currentPlayerId = slotPlayerIds[slotIndex];
+    const currentPlayer = players.find((item) => item.id === currentPlayerId);
+    const currentInjury = currentPlayer ? mockInjuryForPlayer(currentPlayer, slotIndex) : null;
     setSlotPlayerIds((current) => current.map((id, index) => (index === slotIndex ? playerId : id === playerId ? "" : id)));
+    if (currentInjury && currentPlayerId !== playerId) {
+      setClearedInjurySlots((current) => [...new Set([...current, slotIndex])]);
+    }
     setRecruitSlot(null);
   };
 
   const recruitingPosition = recruitSlot === null ? null : slotPositions[recruitSlot];
+  const isReplacingInjuredPlayer = recruitSlot !== null && injuredRows.some((row) => row.slotIndex === recruitSlot);
   const recruitCandidates =
     recruitSlot === null
       ? []
       : players
           .filter((player) => player.primaryPosition === recruitingPosition)
+          .filter((player) => !isReplacingInjuredPlayer || player.id !== slotPlayerIds[recruitSlot])
           .filter((player) => !selected.includes(player.id) || slotPlayerIds[recruitSlot] === player.id)
           .sort((a, b) => Number(b.teamId === seasonTeamId) - Number(a.teamId === seasonTeamId) || playerValueStars(b) - playerValueStars(a));
 
