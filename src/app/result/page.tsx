@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
+import { PlayerPortrait } from "@/components/PlayerPortrait";
 import { players } from "@/data/players";
 import { teams } from "@/data/teams";
 import { recommendLineup } from "@/engine/aiCoach";
@@ -39,6 +40,10 @@ function teamName(teamId: TeamId) {
 
 function teamShortName(teamId: TeamId) {
   return teams.find((team) => team.id === teamId)?.shortName ?? teamId;
+}
+
+function teamColor(teamId: TeamId) {
+  return teams.find((team) => team.id === teamId)?.color ?? "#1d4ed8";
 }
 
 function statLine(stats: HitterDailyStats) {
@@ -276,13 +281,16 @@ export default function ResultPage() {
           {nonTeamTop10.map(({ player, stats, baseScore }, index) => (
             <article key={player.id} className="rounded-lg border border-slate-200 p-3">
               <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-black text-slate-400">#{index + 1}</p>
-                  <p className="font-black text-ink">{player.name}</p>
-                  <p className="text-xs font-semibold text-slate-500">
-                    {player.id} · {teamName(player.teamId)}
-                  </p>
-                  <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-600">{statLine(stats)}</p>
+                <div className="flex min-w-0 items-start gap-3">
+                  <PlayerPortrait player={player} teamColor={teamColor(player.teamId)} size="sm" />
+                  <div className="min-w-0">
+                    <p className="text-xs font-black text-slate-400">#{index + 1}</p>
+                    <p className="font-black text-ink">{player.name}</p>
+                    <p className="text-xs font-semibold text-slate-500">
+                      {player.id} · {teamName(player.teamId)}
+                    </p>
+                    <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-600">{statLine(stats)}</p>
+                  </div>
                 </div>
                 <p className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-sm font-black text-ink">{baseScore}점</p>
               </div>
