@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { players } from "@/data/players";
@@ -21,6 +21,8 @@ type RankRow = {
 type RewardPeriod = "daily" | "monthly" | "season";
 
 const managerName = "홍길동";
+const defaultFriendLeagueName = "친구 미니리그";
+const friendLeagueNameKey = "sol-fantasy-friend-league-name";
 
 const etfTop3 = [
   { name: "SOL 미국S&P500", sales: "최근 5일간 매수 1위", note: "미국 대표지수에 분산 투자" },
@@ -262,7 +264,13 @@ function ModalShell({ title, onClose, children }: { title: string; onClose: () =
   );
 }
 
-function FriendLeagueGuide() {
+function FriendLeagueGuide({
+  leagueName,
+  onLeagueNameChange
+}: {
+  leagueName: string;
+  onLeagueNameChange: (value: string) => void;
+}) {
   const steps = [
     { title: "1. 친구 미니리그 만들기", body: "리그 이름을 정하고 초대할 친구 수를 선택합니다. 유효 참가자 5명 이상이면 보상 대상 리그가 됩니다." },
     { title: "2. 카톡으로 초대 링크 공유", body: "초대 링크를 복사해 카카오톡 단체방에 보내면 친구들이 바로 참가할 수 있습니다. 참가한 친구는 같은 날짜의 라인업 점수로 랭킹을 겨룹니다." },
@@ -271,6 +279,18 @@ function FriendLeagueGuide() {
 
   return (
     <div className="space-y-3">
+      <section className="rounded-lg border border-blue-100 bg-blue-50 p-3">
+        <label className="grid gap-1 text-sm font-black text-ink">
+          미니리그 이름
+          <input
+            value={leagueName}
+            onChange={(event) => onLeagueNameChange(event.target.value)}
+            className="rounded-md border border-blue-100 bg-white p-3 text-sm font-bold text-ink outline-none"
+            placeholder={defaultFriendLeagueName}
+          />
+        </label>
+        <p className="mt-2 text-xs font-semibold text-slate-600">특별한 이름을 정하기 전에는 기본 이름인 친구 미니리그로 표시됩니다.</p>
+      </section>
       <section className="rounded-lg bg-blue-50 p-3">
         <p className="text-xs font-black text-sol">FRIEND LEAGUE</p>
         <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-600">
@@ -290,12 +310,12 @@ function FriendLeagueGuide() {
   );
 }
 
-function FriendLeagueSection({ rows, onOpenGuide }: { rows: RankRow[]; onOpenGuide: () => void }) {
+function FriendLeagueSection({ rows, leagueName, onOpenGuide }: { rows: RankRow[]; leagueName: string; onOpenGuide: () => void }) {
   return (
     <section className="rounded-lg border border-slate-200 p-3">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-black text-ink">친구 미니리그</h2>
+          <h2 className="text-lg font-black text-ink">{leagueName || defaultFriendLeagueName}</h2>
           <p className="mt-1 text-xs font-semibold text-slate-500">일간 1위에게 SOL라이프 미니리그 보험쿠폰 1,000원을 수여합니다. 유효 참가자 5명 이상 리그가 대상입니다.</p>
         </div>
         <button type="button" onClick={onOpenGuide} className="shrink-0 rounded-md bg-ink px-3 py-2 text-xs font-black text-white">
@@ -455,6 +475,22 @@ function ShinhanEtfAdSection() {
 export default function MiniLeaguePage() {
   const { state } = useLocalGameState();
   const [guideOpen, setGuideOpen] = useState(false);
+  const [friendLeagueName, setFriendLeagueName] = useState(defaultFriendLeagueName);
+
+  useEffect(() => {
+    const savedName = window.localStorage.getItem(friendLeagueNameKey);
+    if (savedName) setFriendLeagueName(savedName);
+  }, []);
+
+  const updateFriendLeagueName = (value: string) => {
+    setFriendLeagueName(value);
+    const trimmed = value.trim();
+    if (trimmed) {
+      window.localStorage.setItem(friendLeagueNameKey, trimmed);
+    } else {
+      window.localStorage.removeItem(friendLeagueNameKey);
+    }
+  };
 
   if (!state.lineup) {
     return (
@@ -479,7 +515,7 @@ export default function MiniLeaguePage() {
   return (
     <AppShell title="리그 랭킹">
       <div className="space-y-4">
-        <FriendLeagueSection rows={friends} onOpenGuide={() => setGuideOpen(true)} />
+        <FriendLeagueSection rows={friends} leagueName={friendLeagueName} onOpenGuide={() => setGuideOpen(true)} />
         <RewardRankingSection title={<><SeasonTeamName teamId={seasonTeamId} /> 일간 랭킹</>} {...daily} />
         <RewardRankingSection title={<><SeasonTeamName teamId={seasonTeamId} /> 월간 랭킹</>} {...monthly} />
         <RewardRankingSection
@@ -504,7 +540,7 @@ export default function MiniLeaguePage() {
       </div>
       {guideOpen && (
         <ModalShell title="친구 미니리그 만드는 법" onClose={() => setGuideOpen(false)}>
-          <FriendLeagueGuide />
+          <FriendLeagueGuide leagueName={friendLeagueName} onLeagueNameChange={updateFriendLeagueName} />
         </ModalShell>
       )}
     </AppShell>
