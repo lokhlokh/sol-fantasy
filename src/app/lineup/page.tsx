@@ -351,7 +351,9 @@ export default function LineupPage() {
           <div className="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="font-black text-ink">라이프 트레이너 신한라이프와 질병·상해·부상에 대비하세요</p>
+                <p className="font-black text-ink">
+                  라이프 트레이너 <span className="text-sol">신한라이프</span>와 질병·상해·부상에 대비하세요
+                </p>
                 <p className="mt-1 text-xs font-semibold text-slate-600">모의 광고입니다. 보장 내용과 가입 조건은 상품 설명서를 확인하세요.</p>
               </div>
               <span className="inline-flex h-7 min-w-[44px] shrink-0 items-center justify-center whitespace-nowrap rounded bg-white px-3 text-xs font-black leading-none text-sol [text-orientation:mixed] [writing-mode:horizontal-tb]">보험</span>
