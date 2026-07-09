@@ -198,8 +198,7 @@ export default function ResultPage() {
       <div className="space-y-5">
         <section className="space-y-3 rounded-lg border border-slate-200 p-3">
           <div>
-            <p className="text-xs font-black text-sol">어제 정산</p>
-            <h2 className="text-lg font-black text-ink">우리팀 박스스탯</h2>
+            <h2 className="text-lg font-black text-ink">7월8일 우리팀 스탯</h2>
             <p className="mt-1 text-xs font-semibold text-slate-500">{strategyNames.join(" · ")}</p>
           </div>
 
