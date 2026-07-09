@@ -322,7 +322,7 @@ export default function LineupPage() {
               <h2 className="font-black">부상선수 현황</h2>
               <p className="text-xs font-semibold text-slate-500">우리팀 선수 중 질병, 상해, 부상 리스크가 있는 선수를 확인합니다.</p>
             </div>
-            <span className="rounded bg-red-50 px-2 py-1 text-xs font-black text-red-700">{injuredRows.length}명</span>
+            <span className="inline-flex min-w-10 shrink-0 items-center justify-center whitespace-nowrap rounded bg-red-50 px-2 py-1 text-xs font-black text-red-700">{injuredRows.length}명</span>
           </div>
           {injuredRows.length > 0 ? (
             <div className="grid gap-2">
@@ -352,7 +352,7 @@ export default function LineupPage() {
                 <p className="font-black text-ink">질병·상해·부상 대비는 신한라이프</p>
                 <p className="mt-1 text-xs font-semibold text-slate-600">모의 광고입니다. 보장 내용과 가입 조건은 상품 설명서를 확인하세요.</p>
               </div>
-              <span className="shrink-0 whitespace-nowrap rounded bg-white px-2 py-1 text-[10px] font-black text-sol">보험</span>
+              <span className="inline-flex min-w-8 shrink-0 items-center justify-center whitespace-nowrap rounded bg-white px-2 py-1 text-[10px] font-black text-sol">보험</span>
             </div>
             <a href="https://www.shinhanlife.co.kr/" target="_blank" rel="noreferrer" className="mt-3 block rounded-md bg-sol p-3 text-center text-sm font-black text-white">신한라이프 보험 상품 보기</a>
           </div>
