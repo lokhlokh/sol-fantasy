@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
+import { PlayerPortrait } from "@/components/PlayerPortrait";
 import { players } from "@/data/players";
 import { teams } from "@/data/teams";
 import { simulateDailyBoard } from "@/engine/simulator";
@@ -427,16 +428,19 @@ function RisingStarSection({ teamId }: { teamId: TeamId }) {
         <h2 className="text-lg font-black text-ink">
           <SeasonTeamName teamId={teamId} /> 라이징 스타 랭킹
         </h2>
-        <p className="mt-1 text-xs font-semibold text-slate-500">이번 달 가장 많이 선택된 {short} 선수 Top 3입니다.</p>
+        <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-500">이번 달 가장 많이 선택한 {short} 선수 Top 3입니다. 가장 많은 단장이 선택한 선수에게 매달 100만원의 상금을 수여합니다.</p>
       </div>
       <div className="space-y-2">
         {rows.map(({ player, picks, growth }, index) => (
           <div key={player.id} className="flex items-center justify-between rounded-md bg-slate-50 p-3">
-            <div>
-              <p className="font-black text-ink">
-                {index + 1}. {player.name}
-              </p>
-              <p className="text-xs font-bold text-slate-500">월간 선택 {picks.toLocaleString()}회 · 전월 대비 +{growth}%</p>
+            <div className="flex min-w-0 items-center gap-3">
+              <PlayerPortrait player={player} teamColor={teamColor(teamId)} size="sm" />
+              <div className="min-w-0">
+                <p className="font-black text-ink">
+                  {index + 1}. {player.name}
+                </p>
+                <p className="text-xs font-bold text-slate-500">월간 선택 {picks.toLocaleString()}회 · 전월 대비 +{growth}%</p>
+              </div>
             </div>
             <p className="rounded-full bg-white px-2 py-1 text-xs font-black" style={{ color: teamColor(teamId) }}>
               {short}
