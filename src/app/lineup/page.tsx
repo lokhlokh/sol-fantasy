@@ -352,14 +352,14 @@ export default function LineupPage() {
               </select>
             </label>
             <label className="grid gap-1 text-sm font-bold">
-              부캡틴(x1.5)
+              부캡틴(포인트x1.5)
               <select className="rounded-md border border-slate-300 p-2 font-semibold" value={viceCaptainId} onChange={(event) => setViceCaptainId(event.target.value)}>
                 <option value="">선택 필요</option>
                 {selectedPlayers.filter((player) => player.id !== captainId).map((player) => <option key={player.id} value={player.id}>{player.name} · {playerValueLabel(player)}</option>)}
               </select>
             </label>
             <label className="grid gap-1 text-sm font-bold">
-              히든젬(x2)
+              히든젬(포인트x2.0)
               <select className="rounded-md border border-slate-300 p-2 font-semibold" value={hiddenGemId} onChange={(event) => setHiddenGemId(event.target.value)}>
                 <option value="">영입밸류 3별 이하 선수 선택</option>
                 {hiddenGemCandidates.filter((player) => player.id !== captainId && player.id !== viceCaptainId).map((player) => <option key={player.id} value={player.id}>{player.name} · {playerValueLabel(player)}</option>)}
