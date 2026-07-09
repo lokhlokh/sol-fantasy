@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
+import { PlayerPortrait } from "@/components/PlayerPortrait";
 import { playerValueLabel } from "@/data/playerValue";
 import { players } from "@/data/players";
 import { teams } from "@/data/teams";
@@ -36,6 +37,10 @@ function opponentFor(teamId: TeamId, offset: number) {
   const index = Math.max(0, teamIds.indexOf(teamId));
   const opponentId = teamIds[(index + offset + 1) % teamIds.length];
   return teams.find((team) => team.id === opponentId) ?? teams[0];
+}
+
+function teamColor(teamId: TeamId) {
+  return teams.find((team) => team.id === teamId)?.color ?? "#2563eb";
 }
 
 function recentMoundGames(teamId: TeamId) {
@@ -515,24 +520,27 @@ export default function HomePage() {
                   const badges = celebrationBadges(player.id, celebrationCaptainId, celebrationHiddenGemId, state.lineup);
                   return (
                     <div key={player.id} className="rounded-md bg-slate-50 p-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="truncate font-black">
-                            {index + 1}. {player.name}
-                          </p>
-                          {badges.length > 0 && (
-                            <div className="mt-1 flex flex-wrap gap-1">
-                              {badges.map((badge) => (
-                                <span key={badge} className="rounded bg-sol px-2 py-0.5 text-[10px] font-black text-white">
-                                  {badge}
-                                </span>
-                              ))}
-                            </div>
-                          )}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex min-w-0 items-start gap-3">
+                          <PlayerPortrait player={player} teamColor={teamColor(player.teamId)} size="sm" />
+                          <div className="min-w-0">
+                            <p className="truncate font-black">
+                              {index + 1}. {player.name}
+                            </p>
+                            {badges.length > 0 && (
+                              <div className="mt-1 flex flex-wrap gap-1">
+                                {badges.map((badge) => (
+                                  <span key={badge} className="rounded bg-sol px-2 py-0.5 text-[10px] font-black text-white">
+                                    {badge}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            <p className="mt-1 text-xs font-semibold text-slate-500">{games.map((game) => `${game.date} ${game.score}점`).join(" · ")}</p>
+                          </div>
                         </div>
                         <span className="rounded bg-white px-2 py-1 text-xs font-black">{total}점</span>
                       </div>
-                      <p className="mt-1 text-xs font-semibold text-slate-500">{games.map((game) => `${game.date} ${game.score}점`).join(" · ")}</p>
                     </div>
                   );
                 })}
@@ -542,11 +550,16 @@ export default function HomePage() {
             {worstPlayer && (
               <InsightSection title="기여가 부족한 선수">
                 <div className="rounded-md bg-red-50 p-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="font-black text-red-900">{worstPlayer.player.name}</p>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <PlayerPortrait player={worstPlayer.player} teamColor={teamColor(worstPlayer.player.teamId)} size="sm" />
+                      <div className="min-w-0">
+                        <p className="truncate font-black text-red-900">{worstPlayer.player.name}</p>
+                        <p className="mt-1 text-xs font-semibold text-red-700">{worstPlayer.games.map((game) => `${game.date} ${game.score}점`).join(" · ")}</p>
+                      </div>
+                    </div>
                     <span className="rounded bg-white px-2 py-1 text-xs font-black text-red-700">{worstPlayer.total}점</span>
                   </div>
-                  <p className="mt-1 text-xs font-semibold text-red-700">{worstPlayer.games.map((game) => `${game.date} ${game.score}점`).join(" · ")}</p>
                 </div>
               </InsightSection>
             )}
