@@ -48,7 +48,7 @@ const periodRewards: Record<
   }
 > = {
   daily: {
-    rewardText: "상위 50명에게 땡겨요 상품권을 수여합니다.",
+    rewardText: "Top 50 단장님께 땡겨요 상품권을 드립니다.",
     rewardRank: 50,
     rewardName: "땡겨요 상품권",
     base: 187,
