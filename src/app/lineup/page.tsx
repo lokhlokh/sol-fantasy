@@ -226,6 +226,8 @@ export default function LineupPage() {
           .filter((player) => !isReplacingInjuredPlayer || player.id !== slotPlayerIds[recruitSlot])
           .filter((player) => !selected.includes(player.id) || slotPlayerIds[recruitSlot] === player.id)
           .sort((a, b) => Number(b.teamId === seasonTeamId) - Number(a.teamId === seasonTeamId) || playerValueStars(b) - playerValueStars(a));
+  const injuredTradeRow = recruitSlot === null ? undefined : injuredRows.find((row) => row.slotIndex === recruitSlot);
+  const aiTrainerPick = isReplacingInjuredPlayer ? recruitCandidates[0] : undefined;
 
   return (
     <AppShell title="라인업 구성">
@@ -368,6 +370,17 @@ export default function LineupPage() {
                 </div>
                 <button type="button" onClick={() => setRecruitSlot(null)} className="rounded-md border border-slate-200 px-3 py-2 text-sm font-bold">닫기</button>
               </div>
+              {injuredTradeRow && aiTrainerPick && (
+                <div className="mb-3 rounded-lg border border-red-100 bg-red-50 p-3">
+                  <p className="text-xs font-black text-red-700">AI 트레이너 추천</p>
+                  <p className="mt-1 text-sm font-black text-red-950">
+                    {injuredTradeRow.player.name}은 {injuredTradeRow.injury.status} 이슈가 있어 오늘은 트레이드를 권장합니다.
+                  </p>
+                  <p className="mt-1 text-xs font-semibold leading-relaxed text-red-700">
+                    추천 대체 선수는 {aiTrainerPick.name}입니다. 같은 {positionLabels[aiTrainerPick.primaryPosition]} 포지션이고 {playerValueLabel(aiTrainerPick)}라 라인업 균형을 유지하기 좋습니다.
+                  </p>
+                </div>
+              )}
               <div className="grid gap-2">
                 {recruitCandidates.map((player) => {
                   const team = teams.find((item) => item.id === player.teamId);
