@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { players } from "@/data/players";
@@ -246,12 +246,61 @@ function FriendTrendChart() {
   );
 }
 
-function FriendLeagueSection({ rows }: { rows: RankRow[] }) {
+function ModalShell({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+  return (
+    <div className="fixed inset-0 z-40 flex items-end bg-black/45">
+      <section className="max-h-[82vh] w-full overflow-auto rounded-t-xl bg-white p-4">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-xl font-black text-ink">{title}</h2>
+          <button type="button" onClick={onClose} className="rounded-md border border-slate-200 px-3 py-2 text-sm font-bold">
+            닫기
+          </button>
+        </div>
+        {children}
+      </section>
+    </div>
+  );
+}
+
+function FriendLeagueGuide() {
+  const steps = [
+    { title: "1. 친구 미니리그 만들기", body: "리그 이름을 정하고 초대할 친구 수를 선택합니다. 유효 참가자 5명 이상이면 보상 대상 리그가 됩니다." },
+    { title: "2. 카톡으로 초대 링크 공유", body: "초대 링크를 복사해 카카오톡 단체방에 보내면 친구들이 바로 참가할 수 있습니다. 참가한 친구는 같은 날짜의 라인업 점수로 랭킹을 겨룹니다." },
+    { title: "3. 친구끼리 즐기는 포인트", body: "누가 캡틴을 잘 골랐는지, 히든젬이 터졌는지, 어제보다 랭킹이 얼마나 올랐는지로 매일 가볍게 놀릴 거리와 복수전을 만들 수 있습니다." }
+  ];
+
+  return (
+    <div className="space-y-3">
+      <section className="rounded-lg bg-blue-50 p-3">
+        <p className="text-xs font-black text-sol">FRIEND LEAGUE</p>
+        <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-600">
+          친구 미니리그는 지인끼리 같은 판타지 야구 점수를 비교하고, 하루 랭킹과 10일 랭킹 변화를 보며 경쟁하는 소규모 리그입니다.
+        </p>
+      </section>
+      {steps.map((step) => (
+        <section key={step.title} className="rounded-lg border border-slate-200 p-3">
+          <h3 className="font-black text-ink">{step.title}</h3>
+          <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-600">{step.body}</p>
+        </section>
+      ))}
+      <button type="button" className="w-full rounded-md bg-sol p-3 text-sm font-black text-white">
+        카카오톡으로 친구 초대하기
+      </button>
+    </div>
+  );
+}
+
+function FriendLeagueSection({ rows, onOpenGuide }: { rows: RankRow[]; onOpenGuide: () => void }) {
   return (
     <section className="rounded-lg border border-slate-200 p-3">
-      <div className="mb-3">
-        <h2 className="text-lg font-black text-ink">친구 미니리그</h2>
-        <p className="mt-1 text-xs font-semibold text-slate-500">일간 1위에게 SOL라이프 미니리그 보험쿠폰 1,000원을 수여합니다. 유효 참가자 5명 이상 리그가 대상입니다.</p>
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-black text-ink">친구 미니리그</h2>
+          <p className="mt-1 text-xs font-semibold text-slate-500">일간 1위에게 SOL라이프 미니리그 보험쿠폰 1,000원을 수여합니다. 유효 참가자 5명 이상 리그가 대상입니다.</p>
+        </div>
+        <button type="button" onClick={onOpenGuide} className="shrink-0 rounded-md bg-ink px-3 py-2 text-xs font-black text-white">
+          만드는 법
+        </button>
       </div>
       <div className="space-y-2">
         {rows.map((row) => (
@@ -405,6 +454,7 @@ function ShinhanEtfAdSection() {
 
 export default function MiniLeaguePage() {
   const { state } = useLocalGameState();
+  const [guideOpen, setGuideOpen] = useState(false);
 
   if (!state.lineup) {
     return (
@@ -429,7 +479,7 @@ export default function MiniLeaguePage() {
   return (
     <AppShell title="리그 랭킹">
       <div className="space-y-4">
-        <FriendLeagueSection rows={friends} />
+        <FriendLeagueSection rows={friends} onOpenGuide={() => setGuideOpen(true)} />
         <RewardRankingSection title={<><SeasonTeamName teamId={seasonTeamId} /> 일간 랭킹</>} {...daily} />
         <RewardRankingSection title={<><SeasonTeamName teamId={seasonTeamId} /> 월간 랭킹</>} {...monthly} />
         <RewardRankingSection
@@ -452,6 +502,11 @@ export default function MiniLeaguePage() {
           현재 시즌팀은 <SeasonTeamName teamId={seasonTeamId} />입니다. 보상 대상은 유효 라인업 제출, 중복 리그 제한, 상품별 사용 조건을 충족한 단장을 기준으로 확정됩니다.
         </p>
       </div>
+      {guideOpen && (
+        <ModalShell title="친구 미니리그 만드는 법" onClose={() => setGuideOpen(false)}>
+          <FriendLeagueGuide />
+        </ModalShell>
+      )}
     </AppShell>
   );
 }
