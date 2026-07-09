@@ -78,6 +78,60 @@ function mockInjuryForPlayer(player: Player, index: number) {
   return hash % 13 === 0 ? injuryPool[hash % injuryPool.length] : null;
 }
 
+function BudgetTimeline({ selectedPlayers, max = 50 }: { selectedPlayers: Player[]; max?: number }) {
+  const width = 340;
+  const height = 120;
+  const paddingX = 28;
+  const paddingY = 18;
+  const cumulative = selectedPlayers.reduce(
+    (rows, player) => {
+      const previous = rows[rows.length - 1]?.value ?? 0;
+      return [...rows, { label: `${rows.length}차`, value: previous + player.priceStars }];
+    },
+    [{ label: "시작", value: 0 }] as Array<{ label: string; value: number }>
+  );
+  const rows = cumulative.length > 1 ? cumulative : [{ label: "시작", value: 0 }, { label: "현재", value: 0 }];
+  const x = (index: number) => paddingX + (index * (width - paddingX * 2)) / Math.max(1, rows.length - 1);
+  const y = (value: number) => height - paddingY - (Math.min(max, value) / max) * (height - paddingY * 2);
+  const points = rows.map((row, index) => `${x(index)},${y(row.value)}`).join(" ");
+  const currentBudget = rows[rows.length - 1]?.value ?? 0;
+
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-3">
+      <div className="mb-2 flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-sm font-black text-ink">시즌 예산 변화</h2>
+          <p className="mt-1 text-xs font-semibold text-slate-500">선수 영입에 따른 누적 예산 흐름입니다.</p>
+        </div>
+        <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-black ${currentBudget > max ? "bg-red-50 text-red-700" : "bg-blue-50 text-sol"}`}>
+          현재 {currentBudget}/{max}★
+        </span>
+      </div>
+      <svg viewBox={`0 0 ${width} ${height}`} className="h-32 w-full">
+        {[0, 25, 50].map((tick) => (
+          <g key={tick}>
+            <line x1={paddingX} x2={width - paddingX} y1={y(tick)} y2={y(tick)} stroke="#e2e8f0" strokeWidth="1" />
+            <text x="2" y={y(tick) + 4} className="fill-slate-400 text-[10px] font-bold">
+              {tick}
+            </text>
+          </g>
+        ))}
+        <polyline points={points} fill="none" stroke="#0f8b5f" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+        {rows.map((row, index) => (
+          <g key={`${row.label}-${index}`}>
+            <circle cx={x(index)} cy={y(row.value)} r="4" fill="#0f8b5f" />
+            {(index === 0 || index === rows.length - 1) && (
+              <text x={x(index)} y={height - 2} textAnchor={index === 0 ? "start" : "end"} className="fill-slate-500 text-[10px] font-bold">
+                {index === 0 ? "시즌 시작" : "현재"}
+              </text>
+            )}
+          </g>
+        ))}
+      </svg>
+    </section>
+  );
+}
+
 export default function LineupPage() {
   const { state, setLineup } = useLocalGameState();
   const seasonTeamId = state.seasonTeamId;
@@ -240,6 +294,7 @@ export default function LineupPage() {
         </section>
 
         <BudgetBar used={validation.budget} />
+        <BudgetTimeline selectedPlayers={selectedPlayers} />
 
         <section id="hidden-gem" className="rounded-lg border border-slate-200 p-3">
           <div className="mb-3 flex items-center justify-between gap-3">
