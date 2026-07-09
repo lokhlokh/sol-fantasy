@@ -60,7 +60,7 @@ const periodRewards: Record<
     note: "일간 보상권"
   },
   monthly: {
-    rewardText: "Top 10에게 신한투자증권 주식매입 할인 쿠폰 10만원권을 수여하고, Top 100에게 레전드 카드를 지급합니다.",
+    rewardText: "Top 10 단장님께 신한투자증권 주식매입 할인 쿠폰 10만원권을 수여하고, Top 100 단장님께 레전드 카드를 지급합니다.",
     rewardRank: 100,
     rewardName: "레전드 카드",
     topRewardRank: 10,
