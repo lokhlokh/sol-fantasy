@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { PlayerPortrait } from "@/components/PlayerPortrait";
+import { TeamBadge } from "@/components/TeamBadge";
 import { players } from "@/data/players";
 import { teams } from "@/data/teams";
 import { recommendLineup } from "@/engine/aiCoach";
@@ -163,6 +164,7 @@ export default function ResultPage() {
     .sort((a, b) => b.baseScore - a.baseScore)
     .slice(0, 10);
   const userTeamName = state.fantasyTeamName && !state.fantasyTeamName.includes("?") ? state.fantasyTeamName : "AI킬러";
+  const seasonTeam = teams.find((team) => team.id === effectiveLineup.seasonTeamId);
   const top3BySeasonTeam = teams.map((team) => {
     const mockUsers = Array.from({ length: 5 }, (_, index) => {
       const lineup = buildMockLineupForTeam(team.id, index);
@@ -198,7 +200,11 @@ export default function ResultPage() {
       <div className="space-y-5">
         <section className="space-y-3 rounded-lg border border-slate-200 p-3">
           <div>
-            <h2 className="text-lg font-black text-ink">7월8일 우리팀 스탯</h2>
+            <h2 className="flex flex-wrap items-center gap-2 text-lg font-black text-ink">
+              <span>7월8일</span>
+              {seasonTeam && <TeamBadge team={seasonTeam} />}
+              <span>{userTeamName} 스탯</span>
+            </h2>
             <p className="mt-1 text-xs font-semibold text-slate-500">{strategyNames.join(" · ")}</p>
           </div>
 
