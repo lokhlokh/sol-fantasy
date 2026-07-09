@@ -7,6 +7,7 @@ import { playerValueLabel } from "@/data/playerValue";
 import { players } from "@/data/players";
 import { teams } from "@/data/teams";
 import { calculateHitterBaseScore, calculatePlayerStrategyBonus, calculateTeamMoundScore } from "@/engine/scoringEngine";
+import { hiddenGemBonusCap, hiddenGemBonusRate, hitterScoring, strategyBonusCap } from "@/rules/scoringRules";
 import { strategyCards } from "@/rules/strategyCards";
 import { useLocalGameState } from "@/store/useLocalGameState";
 import type { HitterDailyStats, Lineup, Player, StrategyCardId, TeamId, TeamMoundResult } from "@/types/domain";
@@ -314,6 +315,28 @@ function ManagerManual({ managerName, onComplete }: { managerName: string; onCom
     { title: "5. 리그 랭킹과 친구 미니리그에 도전합니다", body: "일별, 월별, 시즌별 랭킹에서 상품을 노리고, 친구 미니리그에서는 순위 변화 그래프로 경쟁 흐름을 확인합니다." },
     { title: "6. 야구지식과 보상을 함께 겨룹니다", body: "선수 컨디션, 상대 팀, 작전 궁합을 읽는 야구지식이 좋은 라인업으로 이어지고, 좋은 라인업은 보상권에 가까워집니다." },
   ];
+  const hitterPointRows = [
+    { label: "단타", value: hitterScoring.singles },
+    { label: "2루타", value: hitterScoring.doubles },
+    { label: "3루타", value: hitterScoring.triples },
+    { label: "홈런", value: hitterScoring.homeRuns },
+    { label: "타점", value: hitterScoring.rbi },
+    { label: "득점", value: hitterScoring.runs },
+    { label: "볼넷", value: hitterScoring.walks },
+    { label: "사구", value: hitterScoring.hbp },
+    { label: "도루", value: hitterScoring.stolenBases },
+    { label: "삼진", value: hitterScoring.strikeouts },
+  ];
+  const moundPointRows = [
+    { label: "5점차 이상 승리", value: 50 },
+    { label: "승리", value: 30 },
+    { label: "무승부", value: 10 },
+    { label: "패배", value: 0 },
+    { label: "무실책", value: 10 },
+    { label: "실책 1개당", value: -10 },
+    { label: "2실점 이하", value: 15 },
+    { label: "6실점 이상", value: -10 },
+  ];
 
   return (
     <div className="space-y-3">
@@ -331,6 +354,39 @@ function ManagerManual({ managerName, onComplete }: { managerName: string; onCom
           <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-600">{step.body}</p>
         </section>
       ))}
+
+      <section className="rounded-lg border border-slate-200 p-3">
+        <h4 className="font-black text-ink">기록별 포인트</h4>
+        <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-500">
+          선수 기록 점수에 작전 보너스가 더해지고, 캡틴·부캡틴·히든젬 보너스가 최종 점수에 반영됩니다.
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {hitterPointRows.map((row) => (
+            <div key={row.label} className="flex items-center justify-between rounded-md bg-slate-50 px-3 py-2 text-xs font-black">
+              <span className="text-slate-600">{row.label}</span>
+              <span className={row.value < 0 ? "text-red-700" : "text-sol"}>{row.value > 0 ? `+${row.value}` : row.value}점</span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 rounded-md bg-blue-50 p-3 text-xs font-semibold leading-relaxed text-slate-700">
+          작전 보너스는 하루 최대 +{strategyBonusCap}점, 히든젬은 기본 점수의 {Math.ceil(hiddenGemBonusRate * 100)}%를 최대 +{hiddenGemBonusCap}점까지 받습니다.
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-slate-200 p-3">
+        <h4 className="font-black text-ink">마운드 선택팀 포인트</h4>
+        <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-500">
+          오늘 선택한 마운드 팀의 실제 경기 결과, 실책, 실점이 우리팀 점수에 더해집니다.
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {moundPointRows.map((row) => (
+            <div key={row.label} className="flex items-center justify-between rounded-md bg-slate-50 px-3 py-2 text-xs font-black">
+              <span className="text-slate-600">{row.label}</span>
+              <span className={row.value < 0 ? "text-red-700" : "text-sol"}>{row.value > 0 ? `+${row.value}` : row.value}점</span>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section className="rounded-lg bg-amber-50 p-3">
         <p className="font-black text-ink">운영 팁</p>
