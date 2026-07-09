@@ -288,21 +288,21 @@ export default function LineupPage() {
           </div>
           <div className="grid gap-2">
             <label className="grid gap-1 text-sm font-bold">
-              캡틴 2배
+              캡틴(포인트x2)
               <select className="rounded-md border border-slate-300 p-2 font-semibold" value={captainId} onChange={(event) => setCaptainId(event.target.value)}>
                 <option value="">선택 필요</option>
                 {selectedPlayers.map((player) => <option key={player.id} value={player.id}>{player.name} · {playerValueLabel(player)}</option>)}
               </select>
             </label>
             <label className="grid gap-1 text-sm font-bold">
-              부캡틴 보너스
+              부캡틴(x1.5)
               <select className="rounded-md border border-slate-300 p-2 font-semibold" value={viceCaptainId} onChange={(event) => setViceCaptainId(event.target.value)}>
                 <option value="">선택 필요</option>
                 {selectedPlayers.filter((player) => player.id !== captainId).map((player) => <option key={player.id} value={player.id}>{player.name} · {playerValueLabel(player)}</option>)}
               </select>
             </label>
             <label className="grid gap-1 text-sm font-bold">
-              히든젬 보너스
+              히든젬(x2)
               <select className="rounded-md border border-slate-300 p-2 font-semibold" value={hiddenGemId} onChange={(event) => setHiddenGemId(event.target.value)}>
                 <option value="">영입밸류 3별 이하 선수 선택</option>
                 {hiddenGemCandidates.filter((player) => player.id !== captainId && player.id !== viceCaptainId).map((player) => <option key={player.id} value={player.id}>{player.name} · {playerValueLabel(player)}</option>)}
@@ -310,7 +310,7 @@ export default function LineupPage() {
             </label>
           </div>
           <p className="mt-3 text-xs font-semibold leading-relaxed text-slate-500">
-            캡틴은 해당 선수 점수를 2배로 키우고, 부캡틴과 히든젬은 추가 보너스를 받습니다. 히든젬은 낮은 영입밸류 선수의 깜짝 활약을 노리는 선택으로, 영입밸류 3별 이하 선수만 가능하며 캡틴, 부캡틴과 겹칠 수 없습니다. 변경 내용은 유효한 라인업일 때 자동 저장됩니다.
+            히든젬은 낮은 영입밸류 선수의 깜짝 활약을 노리는 선택으로, 영입밸류 3별 이하 선수만 가능
           </p>
         </section>
 
