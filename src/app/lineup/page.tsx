@@ -310,7 +310,7 @@ export default function LineupPage() {
             </label>
           </div>
           <p className="mt-3 text-xs font-semibold leading-relaxed text-slate-500">
-            히든젬은 낮은 영입밸류 선수의 깜짝 활약을 노리는 선택으로, 영입밸류 3별 이하 선수만 가능
+            히든젬은 낮은 영입밸류 선수의 깜짝 활약을 노리는 선택으로, 영입밸류 2별 이하 선수만 가능
           </p>
         </section>
 
@@ -352,7 +352,7 @@ export default function LineupPage() {
                 <p className="font-black text-ink">질병·상해·부상 대비는 신한라이프</p>
                 <p className="mt-1 text-xs font-semibold text-slate-600">모의 광고입니다. 보장 내용과 가입 조건은 상품 설명서를 확인하세요.</p>
               </div>
-              <span className="rounded bg-white px-2 py-1 text-[10px] font-black text-sol">보험</span>
+              <span className="shrink-0 whitespace-nowrap rounded bg-white px-2 py-1 text-[10px] font-black text-sol">보험</span>
             </div>
             <a href="https://www.shinhanlife.co.kr/" target="_blank" rel="noreferrer" className="mt-3 block rounded-md bg-sol p-3 text-center text-sm font-black text-white">신한라이프 보험 상품 보기</a>
           </div>
