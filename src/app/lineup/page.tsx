@@ -372,10 +372,17 @@ export default function LineupPage() {
               </div>
               {injuredTradeRow && aiTrainerPick && (
                 <div className="mb-3 rounded-lg border border-red-100 bg-red-50 p-3">
-                  <p className="text-xs font-black text-red-700">AI 트레이너 추천</p>
-                  <p className="mt-1 text-sm font-black text-red-950">
-                    {injuredTradeRow.player.name}은 {injuredTradeRow.injury.status} 이슈가 있어 오늘은 트레이드를 권장합니다.
-                  </p>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-black text-red-700">AI 트레이너 추천</p>
+                      <p className="mt-1 text-sm font-black text-red-950">
+                        {injuredTradeRow.player.name}은 {injuredTradeRow.injury.status} 이슈가 있어 오늘은 트레이드를 권장합니다.
+                      </p>
+                    </div>
+                    <button type="button" onClick={() => recruitPlayer(recruitSlot, aiTrainerPick.id)} className="shrink-0 rounded-md bg-red-700 px-3 py-2 text-xs font-black text-white">
+                      의견반영
+                    </button>
+                  </div>
                   <p className="mt-1 text-xs font-semibold leading-relaxed text-red-700">
                     추천 대체 선수는 {aiTrainerPick.name}입니다. 같은 {positionLabels[aiTrainerPick.primaryPosition]} 포지션이고 {playerValueLabel(aiTrainerPick)}라 라인업 균형을 유지하기 좋습니다.
                   </p>
