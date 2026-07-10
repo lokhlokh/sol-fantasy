@@ -202,7 +202,7 @@ export default function CardsPage() {
       <div className="space-y-5">
         <section className="space-y-3">
           <div>
-            <p className="text-xs font-black text-amber-700">커리어 전체를 기념합니다</p>
+            <p className="text-xs font-black text-amber-700">나의 영웅, 나의 심장</p>
             <h2 className="text-xl font-black text-ink">레전드 카드</h2>
             <p className="mt-1 text-sm font-semibold text-slate-600">
               레전드 카드는 선택한 시즌팀의 전설적인 선수들로 지급됩니다. 카드를 누르면 선수 기간 전체 기록을 연도별로 볼 수 있습니다.
@@ -218,7 +218,7 @@ export default function CardsPage() {
 
         <section className="space-y-3">
           <div>
-            <p className="text-xs font-black text-sol">우리 팀에서 함께 커집니다</p>
+            <p className="text-xs font-black text-sol">함께 만들어서 더욱 소중해</p>
             <h2 className="text-xl font-black text-ink">한솥밥 카드</h2>
             <p className="mt-1 text-sm font-semibold text-slate-600">
               한솥밥 카드는 나와 우리 팀에서 뛴 기록, 역할, 가치 상승을 중심으로 성장합니다.
