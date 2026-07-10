@@ -330,7 +330,7 @@ export default function LineupPage() {
                       <button type="button" onClick={() => setRecruitSlot(index)} className="rounded-md bg-ink px-3 py-2 text-xs font-black text-white">트레이드</button>
                     </div>
                   ) : (
-                    <button type="button" onClick={() => setRecruitSlot(index)} className="w-full rounded-md border border-dashed border-slate-300 bg-white p-4 text-sm font-black text-slate-600">트레이드</button>
+                    <button type="button" onClick={() => setRecruitSlot(index)} className="w-full rounded-md border border-dashed border-slate-300 bg-white p-4 text-sm font-black text-slate-600">선택</button>
                   )}
                 </div>
               );

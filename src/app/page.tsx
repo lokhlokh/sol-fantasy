@@ -542,7 +542,7 @@ export default function HomePage() {
         />
 
         <div className="pt-2">
-          <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-sol">지난 5일 분석</p>
+          <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-sol">지난 5일간 분석</p>
           <div className="space-y-3">
             <InsightSection title="최고의 작전">
               <div className="grid gap-2">
