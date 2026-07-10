@@ -268,7 +268,7 @@ function ManagerGuideCard({
             <p className="text-xs font-black text-sol">입문자 매뉴얼</p>
             <h2 className="mt-1 text-lg font-black text-ink">단장 취임을 축하합니다</h2>
             <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-600">
-              오늘의 작전, 마운드, 히든젬을 정하고 리그 랭킹과 친구 미니리그에서 보상에 도전하는 방법을 먼저 확인해 보세요.
+              단장 이름과 시즌팀을 정한 뒤, 작전·마운드·히든젬으로 보상에 도전하는 방법을 확인해 보세요.
             </p>
           </div>
           <span className="shrink-0 rounded-md bg-sol px-3 py-2 text-xs font-black text-white">시작</span>
@@ -311,14 +311,31 @@ function ManagerGuideCard({
   );
 }
 
-function ManagerManual({ managerName, onComplete }: { managerName: string; onComplete: () => void }) {
+function ManagerManual({
+  managerName,
+  fantasyTeamName,
+  seasonTeamId,
+  onManagerNameChange,
+  onFantasyTeamNameChange,
+  onSeasonTeamChange,
+  onComplete
+}: {
+  managerName: string;
+  fantasyTeamName: string;
+  seasonTeamId: TeamId;
+  onManagerNameChange: (value: string) => void;
+  onFantasyTeamNameChange: (value: string) => void;
+  onSeasonTeamChange: (value: TeamId) => void;
+  onComplete: () => void;
+}) {
   const steps = [
-    { title: "1. 라인업을 구성합니다", body: "포수, 내야, 외야 슬롯에 8명을 채우고 캡틴, 부캡틴, 히든젬을 지정합니다. 부상 선수가 있으면 교체해서 점수 손실을 줄입니다." },
-    { title: "2. 오늘의 작전을 선택합니다", body: "작전 1은 기본 선택이고, SOL 거래를 완료하면 작전을 하나 더 선택할 수 있습니다. AI 코치 추천을 참고해 보너스가 큰 작전을 고릅니다." },
-    { title: "3. 오늘의 마운드를 고릅니다", body: "10개 팀의 오늘 상대와 지난 5일간 기록을 보고, 우리 점수에 가장 도움이 될 마운드를 선택합니다." },
-    { title: "4. 히든젬으로 역전을 노립니다", body: "영입밸류가 낮지만 최근 기록이 좋은 선수를 히든젬으로 고르면 예상보다 큰 보너스를 얻을 수 있습니다." },
-    { title: "5. 리그 랭킹과 친구 미니리그에 도전합니다", body: "일별, 월별, 시즌별 랭킹에서 상품을 노리고, 친구 미니리그에서는 순위 변화 그래프로 경쟁 흐름을 확인합니다." },
-    { title: "6. 야구지식과 보상을 함께 겨룹니다", body: "선수 컨디션, 상대 팀, 작전 궁합을 읽는 야구지식이 좋은 라인업으로 이어지고, 좋은 라인업은 보상권에 가까워집니다." },
+    { title: "1. 단장 프로필을 정합니다", body: "처음에는 단장 이름, 구단명, 시즌팀을 정합니다. 이후에는 하단 설정 메뉴에서 언제든 다시 바꿀 수 있습니다." },
+    { title: "2. 라인업을 구성합니다", body: "포수, 내야, 외야 슬롯에 8명을 채우고 캡틴(포인트x2), 부캡틴(x1.5), 히든젬(포인트x2)을 지정합니다. 부상 선수가 있으면 시합 전 교체해서 대체선수로 포인트를 획득합니다." },
+    { title: "3. 오늘의 작전을 선택합니다", body: "작전 1은 기본 선택이고, SOL 거래를 완료하면 작전을 하나 더 선택할 수 있습니다. AI 코치 추천을 참고해 보너스가 큰 작전을 고릅니다." },
+    { title: "4. 오늘의 마운드를 고릅니다", body: "10개 팀의 오늘 상대와 지난 5일간 기록을 보고, 우리 점수에 가장 도움이 될 마운드를 선택합니다." },
+    { title: "5. 히든젬으로 역전을 노립니다", body: "영입밸류가 낮지만 최근 기록이 좋은 선수를 히든젬으로 고르면 예상보다 큰 보너스를 얻을 수 있습니다." },
+    { title: "6. 리그 랭킹과 친구 미니리그에 도전합니다", body: "일별, 월별, 시즌별 랭킹에서 상품을 노리고, 친구 미니리그에서는 순위 변화 그래프로 경쟁 흐름을 확인합니다." },
+    { title: "7. 야구지식과 보상을 함께 겨룹니다", body: "선수 컨디션, 상대 팀, 작전 궁합을 읽는 야구지식이 좋은 라인업으로 이어지고, 좋은 라인업은 보상권에 가까워집니다." },
   ];
   const hitterPointRows = [
     { label: "단타", value: hitterScoring.singles },
@@ -351,6 +368,34 @@ function ManagerManual({ managerName, onComplete }: { managerName: string; onCom
         <p className="mt-2 text-sm font-semibold leading-relaxed text-slate-600">
           이 게임은 매일 KBO 데이터를 읽고 작전, 라인업, 마운드, 히든젬을 선택해 친구와 리그 단장들과 겨루는 판타지 야구 운영 게임입니다.
         </p>
+      </section>
+
+      <section className="rounded-lg border border-blue-100 bg-white p-3">
+        <p className="text-xs font-black text-sol">첫 단장 프로필</p>
+        <h4 className="mt-1 font-black text-ink">먼저 이름과 팀을 정하세요</h4>
+        <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-500">
+          이 정보는 덕아웃, 리그 랭킹, 선수카드에 표시됩니다. 나중에는 하단 메뉴의 설정에서 다시 바꿀 수 있습니다.
+        </p>
+        <div className="mt-3 grid gap-2">
+          <label className="grid gap-1 text-sm font-bold text-ink">
+            단장 닉네임
+            <input className="rounded-md border border-slate-300 p-3 text-sm font-semibold" value={managerName} maxLength={10} onChange={(event) => onManagerNameChange(event.target.value)} />
+          </label>
+          <label className="grid gap-1 text-sm font-bold text-ink">
+            구단명
+            <input className="rounded-md border border-slate-300 p-3 text-sm font-semibold" value={fantasyTeamName} maxLength={12} onChange={(event) => onFantasyTeamNameChange(event.target.value)} />
+          </label>
+          <label className="grid gap-1 text-sm font-bold text-ink">
+            시즌팀
+            <select className="rounded-md border border-slate-300 p-3 text-sm font-semibold" value={seasonTeamId} onChange={(event) => onSeasonTeamChange(event.target.value as TeamId)}>
+              {teams.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
       </section>
 
       {steps.map((step) => (
@@ -408,7 +453,7 @@ function ManagerManual({ managerName, onComplete }: { managerName: string; onCom
 }
 
 export default function HomePage() {
-  const { state, setStrategy, setBonusStrategy, setSolTransactionToday, setHiddenGem } = useLocalGameState();
+  const { state, setFantasyTeamName, setManagerNickname, setSeasonTeamId, setStrategy, setBonusStrategy, setSolTransactionToday, setHiddenGem } = useLocalGameState();
   const [modal, setModal] = useState<ModalName>(null);
   const [manualRead, setManualRead] = useState(false);
   const team = teams.find((item) => item.id === state.seasonTeamId);
@@ -569,7 +614,15 @@ export default function HomePage() {
 
         {modal === "manual" && (
           <ModalShell title={manualRead ? `${managerId} 단장의 매뉴얼` : "단장 취임 매뉴얼"} onClose={() => setModal(null)}>
-            <ManagerManual managerName={managerId} onComplete={completeManual} />
+            <ManagerManual
+              managerName={managerId}
+              fantasyTeamName={fantasyTeamName}
+              seasonTeamId={seasonTeamId}
+              onManagerNameChange={setManagerNickname}
+              onFantasyTeamNameChange={setFantasyTeamName}
+              onSeasonTeamChange={setSeasonTeamId}
+              onComplete={completeManual}
+            />
           </ModalShell>
         )}
 
