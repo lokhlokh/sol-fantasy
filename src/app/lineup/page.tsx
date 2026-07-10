@@ -377,7 +377,7 @@ export default function LineupPage() {
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
               <h2 className="font-black">부상선수 현황</h2>
-              <p className="text-xs font-semibold text-slate-500">우리팀 선수 중 질병, 상해, 부상 리스크가 있는 선수를 확인합니다.</p>
+              <p className="text-xs font-semibold text-slate-500">부상으로 출전이 어려운 선수를 확인하고 교체합니다.</p>
             </div>
             <span className="inline-flex min-w-10 shrink-0 items-center justify-center whitespace-nowrap rounded bg-red-50 px-2 py-1 text-xs font-black text-red-700">{injuredRows.length}명</span>
           </div>
