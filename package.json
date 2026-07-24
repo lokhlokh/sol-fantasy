@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "sync:legend-packages": "node scripts/sync-legend-packages.mjs",
     "dev": "next dev",
+    "predev": "pnpm sync:legend-packages",
     "build": "next build",
+    "prebuild": "pnpm sync:legend-packages",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/AppShell";
 import { teams } from "@/data/teams";
@@ -53,6 +54,20 @@ export default function AdminPage() {
   const managerNickname = state.managerNickname ?? "홍길동";
   const seasonTeamId = state.seasonTeamId ?? "LG";
   const selectedTeam = teams.find((team) => team.id === seasonTeamId);
+  const [folderCardCount, setFolderCardCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/legend-packages/index.json", { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : { cards: [] }))
+      .then((manifest: { cards?: unknown[] }) => {
+        if (active) setFolderCardCount(manifest.cards?.length ?? 0);
+      })
+      .catch(() => {
+        if (active) setFolderCardCount(0);
+      });
+    return () => { active = false; };
+  }, []);
 
   return (
     <AppShell title="내 구단 설정">
@@ -120,6 +135,21 @@ export default function AdminPage() {
           </div>
         </SettingCard>
 
+        <SettingCard title="레전드 카드 관리" description="지정 폴더의 패키지를 자동으로 읽어 레전드 카드 목록에 일괄 반영합니다.">
+          <div className="space-y-3">
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
+              <p className="text-xs font-black text-amber-800">지정 폴더</p>
+              <code className="mt-1 block break-all text-sm font-black text-ink">legend-packages/</code>
+              <p className="mt-2 text-xs font-semibold leading-relaxed text-amber-900">
+                완성된 .sollegend.json 파일을 이 폴더에 넣고 <code>pnpm sync:legend-packages</code>를 실행하세요. 개발 서버 재시작이나 빌드 때도 자동 실행됩니다.
+              </p>
+            </div>
+            <p className="rounded-md bg-slate-50 p-3 text-sm font-bold text-slate-600">
+              {folderCardCount === null ? "폴더 카드 목록을 확인하는 중입니다." : `현재 폴더에 ${folderCardCount}장의 레전드 카드가 등록되어 있습니다.`}
+            </p>
+            <Link href="/cards" className="block rounded-md bg-sol p-3 text-center text-sm font-black text-white">레전드 카드 목록 보기</Link>
+          </div>
+        </SettingCard>
         <SettingCard title="SOL 거래 혜택" description="오늘 SOL 거래가 있으면 작전 2를 추가로 선택할 수 있습니다.">
           <ToggleRow
             label="오늘 SOL 거래 완료"

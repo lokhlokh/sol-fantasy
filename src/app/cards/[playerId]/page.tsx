@@ -2,89 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { PlayerPortrait } from "@/components/PlayerPortrait";
-import { findLegendCardById, legendCardStaticParams, type LegendCard } from "@/data/legendCards";
 import { positionLabels } from "@/data/labels";
 import { players } from "@/data/players";
 import { teams } from "@/data/teams";
 import { getCardLevel, getCardProgress, mockCardProgress, nextCardGoal } from "@/engine/cardEngine";
 
 export function generateStaticParams() {
-  return [...mockCardProgress.map((progress) => ({ playerId: progress.playerId })), ...legendCardStaticParams()];
-}
-
-function LegendDetail({ card }: { card: LegendCard }) {
-  const team = teams.find((item) => item.id === card.player.teamId);
-
-  return (
-    <AppShell title="레전드 카드">
-      <div className="space-y-4">
-        <Link href="/cards" className="inline-flex rounded-md border border-slate-200 px-3 py-2 text-sm font-bold">
-          카드 목록으로
-        </Link>
-
-        <section className="rounded-lg bg-amber-50 p-3 shadow-soft">
-          <PlayerPortrait player={card.player} teamColor={team?.color ?? "#111827"} />
-          <p className="mt-3 text-center text-xs font-bold text-amber-800">실제 사진이 아닌 mock 전용 레전드 선수 일러스트입니다.</p>
-        </section>
-
-        <section className="rounded-lg border border-amber-200 bg-white p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-xs font-black text-amber-700">LG 레전드</p>
-              <h2 className="text-2xl font-black">{card.player.name}</h2>
-              <p className="mt-1 font-bold text-slate-600">{card.nickname}</p>
-              <p className="mt-1 text-sm font-semibold text-slate-500">
-                {team?.name ?? card.player.teamId} · {positionLabels[card.player.primaryPosition]} · {card.era}
-              </p>
-            </div>
-            <span className="rounded-md bg-ink px-3 py-2 text-sm font-black text-white">LEGEND</span>
-          </div>
-        </section>
-
-        <section className="grid grid-cols-1 gap-2">
-          <p className="rounded-lg bg-amber-50 p-3 text-sm font-black text-ink">{card.record}</p>
-          <p className="rounded-lg bg-amber-50 p-3 text-sm font-bold text-amber-800">{card.trophy}</p>
-          <p className="rounded-lg border border-slate-200 p-3 text-sm font-semibold leading-relaxed text-slate-600">{card.story}</p>
-        </section>
-
-        <section className="rounded-lg border border-slate-200 p-4">
-          <div className="mb-3">
-            <h3 className="font-black">연도별 총 레코드</h3>
-            <p className="mt-1 text-xs font-semibold text-slate-500">레전드 카드에는 선수 기간 전체의 시즌별 기록이 함께 보관됩니다.</p>
-          </div>
-          <div className="overflow-hidden rounded-lg border border-slate-200">
-            <div className="grid grid-cols-[52px_48px_54px_48px_42px_42px_42px_54px] bg-slate-100 px-2 py-2 text-[11px] font-black text-slate-600">
-              <span>연도</span>
-              <span className="text-right">경기</span>
-              <span className="text-right">타율</span>
-              <span className="text-right">안타</span>
-              <span className="text-right">홈런</span>
-              <span className="text-right">타점</span>
-              <span className="text-right">도루</span>
-              <span className="text-right">OPS</span>
-            </div>
-            <div className="max-h-[420px] overflow-auto">
-              {card.annualRecords.map((record) => (
-                <div key={record.year} className="border-t border-slate-100">
-                  <div className="grid grid-cols-[52px_48px_54px_48px_42px_42px_42px_54px] px-2 py-2 text-[11px] font-bold text-ink">
-                    <span>{record.year}</span>
-                    <span className="text-right">{record.games}</span>
-                    <span className="text-right">{record.average}</span>
-                    <span className="text-right">{record.hits}</span>
-                    <span className="text-right">{record.homeRuns}</span>
-                    <span className="text-right">{record.rbi}</span>
-                    <span className="text-right">{record.steals}</span>
-                    <span className="text-right">{record.ops}</span>
-                  </div>
-                  <p className="px-2 pb-2 text-[11px] font-semibold text-slate-500">{record.note}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      </div>
-    </AppShell>
-  );
+  return mockCardProgress.map((progress) => ({ playerId: progress.playerId }));
 }
 
 function HansotDetail({ playerId }: { playerId: string }) {
@@ -201,9 +125,5 @@ function HansotDetail({ playerId }: { playerId: string }) {
 
 export default async function CardDetailPage({ params }: { params: Promise<{ playerId: string }> }) {
   const { playerId } = await params;
-  const legendCard = findLegendCardById(playerId);
-
-  if (legendCard) return <LegendDetail card={legendCard} />;
-
   return <HansotDetail playerId={playerId} />;
 }

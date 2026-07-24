@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { PlayerPortrait } from "@/components/PlayerPortrait";
-import { getLegendCardsForTeam, type LegendCard } from "@/data/legendCards";
 import { positionLabels } from "@/data/labels";
 import { players } from "@/data/players";
 import { teams } from "@/data/teams";
 import { getCardLevel, mockCardProgress } from "@/engine/cardEngine";
-import { useLocalGameState } from "@/store/useLocalGameState";
+import { useCustomLegendCards } from "@/store/useCustomLegendCards";
+import type { CustomLegendCard } from "@/types/legendMaker";
+import { getCustomLegendProfile } from "@/data/customLegendProfiles";
 import type { TeamId } from "@/types/domain";
 
 const legendCollectionRanking = {
@@ -77,31 +78,29 @@ function LegendCollectionRankingCard() {
   );
 }
 
-function LegendCardView({ card }: { card: LegendCard }) {
-  const team = teamOf(card.player.teamId);
-
+function CustomLegendCardView({ card }: { card: CustomLegendCard }) {
+  const team = teamOf(card.teamId);
+  const profile = getCustomLegendProfile(card);
   return (
-    <Link href={`/cards/${card.player.id}`} className="block rounded-lg border border-amber-200 bg-amber-50 p-3 transition hover:border-amber-400 hover:bg-amber-100">
+    <Link href={`/cards/custom/${card.id}`} className="block rounded-lg border border-amber-200 bg-amber-50 p-3 transition hover:border-amber-400 hover:bg-amber-100">
       <div className="flex gap-3">
-        <PlayerPortrait player={card.player} teamColor={team?.color ?? "#111827"} size="sm" />
+        <img src={card.portraitImage || card.cardImage} alt={`${card.name} 레전드 카드`} className="h-16 w-16 shrink-0 rounded-lg border border-slate-200 object-cover object-top" />
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div>
               <p className="text-xs font-black text-amber-700">레전드 카드</p>
-              <h3 className="text-lg font-black text-ink">{card.player.name}</h3>
-              <p className="text-sm font-bold text-slate-600">{card.nickname}</p>
+              <h3 className="text-lg font-black text-ink">{card.name}</h3>
+              <p className="text-sm font-bold text-slate-600">{card.nickname || positionLabels[card.position as keyof typeof positionLabels] || card.position}</p>
             </div>
             <span className="rounded-md bg-ink px-2 py-1 text-xs font-black text-white">LEGEND</span>
           </div>
-          <p className="mt-2 text-xs font-bold text-slate-500">
-            {team?.name ?? card.player.teamId} · {card.era}
-          </p>
+          <p className="mt-2 text-xs font-bold text-slate-500">{team?.name ?? card.teamId} · {profile.era}</p>
         </div>
       </div>
       <div className="mt-3 space-y-2 text-sm">
-        <p className="rounded-md bg-white p-2 font-black text-ink">{card.record}</p>
-        <p className="rounded-md bg-white p-2 font-bold text-amber-800">{card.trophy}</p>
-        <p className="text-xs font-semibold leading-relaxed text-slate-600">{card.story}</p>
+        <p className="rounded-md bg-white p-2 font-black text-ink">{profile.record}</p>
+        <p className="rounded-md bg-white p-2 font-bold text-amber-800">{profile.trophy}</p>
+        <p className="text-xs font-semibold leading-relaxed text-slate-600">{profile.story}</p>
       </div>
       <p className="mt-3 text-right text-xs font-black text-amber-800">연도별 기록 보기</p>
     </Link>
@@ -194,25 +193,15 @@ function ShinhanCardAdSection() {
 }
 
 export default function CardsPage() {
-  const { state } = useLocalGameState();
-  const legendCards = getLegendCardsForTeam(state.seasonTeamId ?? "LG");
+  const { cards: customLegendCards } = useCustomLegendCards();
 
   return (
     <AppShell title="선수카드">
       <div className="space-y-5">
         <section className="space-y-3">
-          <div>
-            <p className="text-xs font-black text-amber-700">나의 영웅, 나의 심장</p>
-            <h2 className="text-xl font-black text-ink">레전드 카드</h2>
-            <p className="mt-1 text-sm font-semibold text-slate-600">
-              레전드 카드는 선택한 시즌팀의 전설적인 선수들로 지급됩니다. 카드를 누르면 선수 기간 전체 기록을 연도별로 볼 수 있습니다.
-            </p>
-          </div>
           <LegendCollectionRankingCard />
           <div className="space-y-3">
-            {legendCards.map((card) => (
-              <LegendCardView key={card.player.id} card={card} />
-            ))}
+            {customLegendCards.map((card) => <CustomLegendCardView key={card.id} card={card} />)}
           </div>
         </section>
 
