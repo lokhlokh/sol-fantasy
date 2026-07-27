@@ -31,7 +31,7 @@ function HansotDetail({ playerId }: { playerId: string }) {
 
         <section className="rounded-lg bg-white p-3 shadow-soft">
           <PlayerPortrait player={player} teamColor={team?.color ?? "#2563eb"} />
-          <p className="mt-3 text-center text-xs font-bold text-slate-500">실제 사진이 아닌 mock 전용 선수 일러스트입니다.</p>
+          <p className="mt-3 text-center text-xs font-bold text-slate-500">실제 사진이 아닌 게임용 선수 일러스트입니다.</p>
         </section>
 
         <section className="rounded-lg border border-slate-200 p-4">

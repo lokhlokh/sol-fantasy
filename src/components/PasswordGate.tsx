@@ -34,7 +34,7 @@ export function PasswordGate({ children }: { children: ReactNode }) {
   return (
     <main className="mx-auto flex min-h-screen max-w-md items-center bg-slate-50 px-5">
       <section className="w-full rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-sol">SOL 판타지야구 Mock</p>
+        <p className="text-xs font-black tracking-tight text-sol">신한 SOL 판타지리그 2026</p>
         <h1 className="mt-2 text-2xl font-black text-ink">보고용 목업 입장</h1>
         <p className="mt-2 text-sm font-semibold leading-relaxed text-slate-600">
           내부 공유용 목업입니다. 전달받은 비밀번호를 입력해 주세요.

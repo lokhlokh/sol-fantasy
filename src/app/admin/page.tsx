@@ -8,6 +8,9 @@ import { teams } from "@/data/teams";
 import { useLocalGameState } from "@/store/useLocalGameState";
 import type { TeamId } from "@/types/domain";
 
+const manualReadKey = "sol-fantasy-manual-read";
+const friendLeagueNameKey = "sol-fantasy-friend-league-name";
+
 const teamDisplayNames: Record<TeamId, string> = {
   KIA: "KIA 모의 타이거즈",
   LG: "LG 모의 트윈스",
@@ -50,11 +53,19 @@ export default function AdminPage() {
   const [pushEnabled, setPushEnabled] = useState(true);
   const [marketingEnabled, setMarketingEnabled] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [resetComplete, setResetComplete] = useState(false);
   const fantasyTeamName = state.fantasyTeamName ?? "AI킬러";
   const managerNickname = state.managerNickname ?? "홍길동";
   const seasonTeamId = state.seasonTeamId ?? "LG";
   const selectedTeam = teams.find((team) => team.id === seasonTeamId);
   const [folderCardCount, setFolderCardCount] = useState<number | null>(null);
+
+  const resetDemo = () => {
+    reset();
+    window.localStorage.removeItem(manualReadKey);
+    window.localStorage.removeItem(friendLeagueNameKey);
+    setResetComplete(true);
+  };
 
   useEffect(() => {
     let active = true;
@@ -167,9 +178,10 @@ export default function AdminPage() {
         </SettingCard>
 
         <SettingCard title="체험 데이터" description="목업 시연을 다시 시작해야 할 때만 사용합니다.">
-          <button type="button" onClick={reset} className="w-full rounded-md border border-red-200 bg-red-50 p-3 text-sm font-black text-red-700">
+          <button type="button" onClick={resetDemo} className="w-full rounded-md border border-red-200 bg-red-50 p-3 text-sm font-black text-red-700">
             체험 데이터 초기화
           </button>
+          {resetComplete && <p className="mt-2 rounded-md bg-emerald-50 p-2 text-center text-xs font-black text-emerald-700">초기화 완료. 덕아웃에서 시작 화면을 확인하세요.</p>}
         </SettingCard>
       </div>
     </AppShell>

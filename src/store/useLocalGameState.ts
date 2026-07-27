@@ -38,6 +38,15 @@ export function useLocalGameState() {
   const [state, setState] = useState<GameState>(readStoredState);
 
   useEffect(() => {
+    const syncStoredState = (event: StorageEvent) => {
+      if (event.key === key) setState(readStoredState());
+    };
+
+    window.addEventListener("storage", syncStoredState);
+    return () => window.removeEventListener("storage", syncStoredState);
+  }, []);
+
+  useEffect(() => {
     writeStoredState(state);
   }, [state]);
 

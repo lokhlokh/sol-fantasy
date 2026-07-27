@@ -21,7 +21,6 @@ type RankRow = {
 
 type RewardPeriod = "daily" | "monthly" | "season";
 
-const managerName = "홍길동";
 const defaultFriendLeagueName = "친구 미니리그";
 const friendLeagueNameKey = "sol-fantasy-friend-league-name";
 
@@ -88,13 +87,15 @@ const periodRewards: Record<
   }
 };
 
-const friendTrend = [
-  { name: "홍길동", color: "#2563eb", face: "🤪", ranks: [4, 4, 5, 4, 3, 4, 4, 3, 3, 4] },
-  { name: "민지", color: "#dc2626", face: "😝", ranks: [2, 3, 3, 2, 2, 1, 2, 2, 1, 1] },
-  { name: "도윤", color: "#16a34a", face: "🤓", ranks: [3, 2, 2, 3, 4, 3, 3, 4, 2, 2] },
-  { name: "서연", color: "#9333ea", face: "😵‍💫", ranks: [1, 1, 1, 1, 1, 2, 1, 1, 4, 3] },
-  { name: "지훈", color: "#f59e0b", face: "🤡", ranks: [5, 5, 4, 5, 5, 5, 5, 5, 5, 5] }
-];
+function friendTrendRows(managerName: string) {
+  return [
+    { name: managerName, color: "#2563eb", face: "🤪", ranks: [4, 4, 5, 4, 3, 4, 4, 3, 3, 4] },
+    { name: "민지", color: "#dc2626", face: "😝", ranks: [2, 3, 3, 2, 2, 1, 2, 2, 1, 1] },
+    { name: "도윤", color: "#16a34a", face: "🤓", ranks: [3, 2, 2, 3, 4, 3, 3, 4, 2, 2] },
+    { name: "서연", color: "#9333ea", face: "😵‍💫", ranks: [1, 1, 1, 1, 1, 2, 1, 1, 4, 3] },
+    { name: "지훈", color: "#f59e0b", face: "🤡", ranks: [5, 5, 4, 5, 5, 5, 5, 5, 5, 5] }
+  ];
+}
 
 function teamShortName(teamId: TeamId) {
   return teams.find((team) => team.id === teamId)?.shortName ?? teamId;
@@ -122,7 +123,7 @@ function competitorScore(period: RewardPeriod, rank: number) {
   return Math.max(1, Math.ceil(config.tailStart - (rank - 4) * config.tailStep));
 }
 
-function rewardRows(teamId: TeamId, period: RewardPeriod, myScore: number): {
+function rewardRows(teamId: TeamId, period: RewardPeriod, myScore: number, managerName: string): {
   top3: RankRow[];
   mine: RankRow;
   gap: number;
@@ -178,9 +179,9 @@ function rewardRows(teamId: TeamId, period: RewardPeriod, myScore: number): {
   };
 }
 
-function friendRows(myScore: number): RankRow[] {
+function friendRows(myScore: number, managerName: string): RankRow[] {
   return [
-    { id: "ME", rank: 0, nickname: "홍길동", score: myScore, note: "나", isMe: true },
+    { id: "ME", rank: 0, nickname: managerName, score: myScore, note: "나", isMe: true },
     { id: "f1", rank: 0, nickname: "민지 강공야구", score: Math.ceil(myScore + 23), note: "친구" },
     { id: "f2", rank: 0, nickname: "도윤 매직라인업", score: Math.ceil(myScore + 11), note: "친구" },
     { id: "f3", rank: 0, nickname: "서연 불펜장인", score: Math.ceil(myScore - 7), note: "친구" },
@@ -210,7 +211,8 @@ function gapText(
   return `${base} ${topRewardName}이 지급되는 Top ${topRewardRank}까지는 ${topRewardGap}점이 더 필요합니다.`;
 }
 
-function FriendTrendChart() {
+function FriendTrendChart({ managerName }: { managerName: string }) {
+  const trendRows = friendTrendRows(managerName);
   const width = 328;
   const height = 150;
   const padding = 20;
@@ -232,7 +234,7 @@ function FriendTrendChart() {
             </text>
           </g>
         ))}
-        {friendTrend.map((line) => {
+        {trendRows.map((line) => {
           const points = line.ranks.map((rank, index) => `${x(index)},${y(rank)}`).join(" ");
           const endX = x(line.ranks.length - 1);
           const endY = y(line.ranks[line.ranks.length - 1]);
@@ -248,7 +250,7 @@ function FriendTrendChart() {
         })}
       </svg>
       <div className="grid grid-cols-2 gap-2">
-        {friendTrend.map((line) => (
+        {trendRows.map((line) => (
           <div key={line.name} className="flex items-center gap-2 text-xs font-bold text-slate-600">
             <span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-sm" role="img" aria-label={`${line.name} 얼굴`}>
               {line.face}
@@ -323,7 +325,7 @@ function FriendLeagueGuide({
   );
 }
 
-function FriendLeagueSection({ rows, leagueName, onOpenGuide }: { rows: RankRow[]; leagueName: string; onOpenGuide: () => void }) {
+function FriendLeagueSection({ rows, leagueName, managerName, onOpenGuide }: { rows: RankRow[]; leagueName: string; managerName: string; onOpenGuide: () => void }) {
   return (
     <section className="relative isolate overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 p-4 text-white shadow-sm">
       <img
@@ -360,7 +362,7 @@ function FriendLeagueSection({ rows, leagueName, onOpenGuide }: { rows: RankRow[
           ))}
         </div>
         <div className="mt-3">
-          <FriendTrendChart />
+          <FriendTrendChart managerName={managerName} />
         </div>
       </div>
     </section>
@@ -504,10 +506,17 @@ export default function MiniLeaguePage() {
   const { state } = useLocalGameState();
   const [guideOpen, setGuideOpen] = useState(false);
   const [friendLeagueName, setFriendLeagueName] = useState(defaultFriendLeagueName);
+  const managerName = state.managerNickname ?? "홍길동";
 
   useEffect(() => {
     const savedName = window.localStorage.getItem(friendLeagueNameKey);
     if (savedName) setFriendLeagueName(savedName);
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === friendLeagueNameKey) setFriendLeagueName(event.newValue ?? defaultFriendLeagueName);
+    };
+
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const updateFriendLeagueName = (value: string) => {
@@ -535,15 +544,15 @@ export default function MiniLeaguePage() {
 
   const board = simulateDailyBoard(state.lineup, state.seed);
   const seasonTeamId = state.seasonTeamId ?? state.lineup.seasonTeamId;
-  const friends = friendRows(board.userScore.totalScore);
-  const daily = rewardRows(seasonTeamId, "daily", board.userScore.totalScore);
-  const monthly = rewardRows(seasonTeamId, "monthly", board.userScore.totalScore);
-  const season = rewardRows(seasonTeamId, "season", board.userScore.totalScore);
+  const friends = friendRows(board.userScore.totalScore, managerName);
+  const daily = rewardRows(seasonTeamId, "daily", board.userScore.totalScore, managerName);
+  const monthly = rewardRows(seasonTeamId, "monthly", board.userScore.totalScore, managerName);
+  const season = rewardRows(seasonTeamId, "season", board.userScore.totalScore, managerName);
 
   return (
     <AppShell title="리그 랭킹">
       <div className="space-y-4">
-        <FriendLeagueSection rows={friends} leagueName={friendLeagueName} onOpenGuide={() => setGuideOpen(true)} />
+        <FriendLeagueSection rows={friends} leagueName={friendLeagueName} managerName={managerName} onOpenGuide={() => setGuideOpen(true)} />
         <RewardRankingSection title={<><SeasonTeamName teamId={seasonTeamId} /> 일간 랭킹</>} {...daily} />
         <RewardRankingSection title={<><SeasonTeamName teamId={seasonTeamId} /> 월간 랭킹</>} {...monthly} />
         <RewardRankingSection

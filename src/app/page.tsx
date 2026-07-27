@@ -175,7 +175,7 @@ function MoundStatusCard({
         </div>
         <div className="max-w-[72%]">
           <p className="text-lg font-black text-white">{value}</p>
-          <p className="mt-1 text-sm font-semibold leading-5 text-slate-200">{detail}</p>
+          <p className="mt-1 whitespace-pre-line text-sm font-semibold leading-5 text-slate-200">{detail}</p>
         </div>
       </div>
     </section>
@@ -316,7 +316,6 @@ function AiRecommendationBox({ coach, title, children }: { coach: string; title:
 function ManagerGuideCard({
   managerName,
   manualRead,
-  teamCreated,
   lineupReady,
   hasSolTransaction,
   collectedCards,
@@ -324,15 +323,13 @@ function ManagerGuideCard({
 }: {
   managerName: string;
   manualRead: boolean;
-  teamCreated: boolean;
   lineupReady: boolean;
   hasSolTransaction: boolean;
   collectedCards: number;
   onOpen: () => void;
 }) {
-  // 팀을 만든 뒤에는 취임 안내 대신 단장의 방 요약을 유지합니다.
-  // 매뉴얼을 읽지 않았더라도 팀 선택이 완료되면 운영 화면으로 진입한 상태입니다.
-  if (!manualRead && !teamCreated) {
+  // 취임 매뉴얼을 확인하기 전까지는 처음 방문한 단장에게 환영 화면을 보여줍니다.
+  if (!manualRead) {
     return (
       <button
         type="button"
@@ -347,15 +344,15 @@ function ManagerGuideCard({
         />
         <span className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/78 to-slate-950/28" aria-hidden="true" />
         <span className="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-slate-950/15" aria-hidden="true" />
-        <div className="relative flex min-h-[176px] items-end justify-between gap-4 p-4">
-          <div className="max-w-[78%] [text-shadow:0_1px_10px_rgba(0,0,0,0.65)]">
-            <p className="text-xs font-black tracking-[0.08em] text-blue-200">입문자 매뉴얼</p>
+        <div className="relative min-h-[176px] p-4 [text-shadow:0_1px_10px_rgba(0,0,0,0.65)]">
+          <p className="text-xs font-black tracking-[0.08em] text-blue-200">입문자 매뉴얼</p>
+          <div className="max-w-[78%] pt-8">
             <h2 className="mt-1 text-xl font-black tracking-tight text-white">단장 취임을 축하합니다</h2>
             <p className="mt-2 text-sm font-semibold leading-5 text-slate-100">
-              단장 이름과 시즌팀을 정한 뒤, 작전과 마운드로 보상에 도전하는 방법을 확인해 보세요.
+              팀을 정하고 이름을 붙여주세요. 전략을 세우고 경쟁자를 압도하는 최고의 단장이 되어주세요
             </p>
           </div>
-          <span className={`${DUGOUT_ACTION_BUTTON_CLASS} mb-0.5 border border-white/30 bg-white/95 text-slate-950`}>
+          <span className={`${DUGOUT_ACTION_BUTTON_CLASS} absolute right-4 top-4 border border-white/30 bg-white/95 text-slate-950`}>
             시작
           </span>
         </div>
@@ -370,20 +367,21 @@ function ManagerGuideCard({
   ];
 
   return (
-    <section className="relative isolate overflow-hidden rounded-xl border border-slate-200/80 bg-slate-100 shadow-sm">
+    <section className="relative isolate overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 shadow-sm">
       <img
         src="/dugout/gm-office-desk-v1.png"
         alt=""
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover object-[center_62%] opacity-90"
       />
-      <span className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/84 to-white/62" aria-hidden="true" />
+      <span className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/72 to-slate-950/36" aria-hidden="true" />
+      <span className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-slate-950/35" aria-hidden="true" />
 
-      <div className="relative p-3">
+      <div className="relative p-3 [text-shadow:0_1px_8px_rgba(0,0,0,0.55)]">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-black tracking-[0.08em] text-sol">MY ROOM</p>
-            <h2 className="mt-1 text-lg font-black text-ink">{managerName} 단장의 방</h2>
+            <p className="text-xs font-black tracking-[0.08em] text-blue-200">MY ROOM</p>
+            <h2 className="mt-1 text-lg font-black text-white">{managerName} 단장의 방</h2>
           </div>
           <button type="button" onClick={onOpen} className="shrink-0 rounded-md bg-ink px-3 py-2 text-xs font-black text-white shadow-sm">
             매뉴얼
@@ -391,13 +389,13 @@ function ManagerGuideCard({
         </div>
         <div className="mt-3 grid grid-cols-3 gap-2">
           {achievements.map((item) => (
-            <div key={item.label} className={`rounded-md p-2 text-center text-xs font-black shadow-sm backdrop-blur-[2px] ${item.done ? "bg-blue-50/95 text-sol" : "bg-slate-100/95 text-slate-500"}`}>
+            <div key={item.label} className={`rounded-md border border-white/15 p-2 text-center text-xs font-black shadow-sm backdrop-blur-[2px] ${item.done ? "bg-blue-950/65 text-blue-100" : "bg-slate-950/65 text-slate-300"}`}>
               <p>{item.done ? "완료" : "진행중"}</p>
               <p className="mt-1">{item.label}</p>
             </div>
           ))}
         </div>
-        <div className="mt-3 space-y-1 rounded-md border border-white/70 bg-white/78 p-3 text-xs font-bold leading-relaxed text-slate-700 shadow-sm backdrop-blur-[2px]">
+        <div className="mt-3 space-y-1 rounded-md border border-white/15 bg-slate-950/65 p-3 text-xs font-bold leading-relaxed text-slate-200 shadow-lg backdrop-blur-[2px]">
           <p>이번 주 최고 운영: 185점, LG 모의 트윈스 일간 랭킹 12위</p>
           <p>레전드 카드 수집: {collectedCards}장, 미디어데이 초청권까지 6장</p>
           <p>친구 미니리그: 최근 10일간 4계단 상승, 1위와 18점 차</p>
@@ -586,7 +584,14 @@ export default function HomePage() {
   const celebrationCaptainId = topPlayers[0]?.player.id ?? state.lineup?.captainId;
 
   useEffect(() => {
-    setManualRead(window.localStorage.getItem(manualReadKey) === "done");
+    const syncManualRead = () => setManualRead(window.localStorage.getItem(manualReadKey) === "done");
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === manualReadKey) syncManualRead();
+    };
+
+    syncManualRead();
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const completeManual = () => {
@@ -615,7 +620,6 @@ export default function HomePage() {
         <ManagerGuideCard
           managerName={managerId}
           manualRead={manualRead}
-          teamCreated={Boolean(state.seasonTeamId)}
           lineupReady={Boolean(state.lineup)}
           hasSolTransaction={hasSolTransaction}
           collectedCards={3}
@@ -624,7 +628,7 @@ export default function HomePage() {
         <StrategyStatusCard strategyCard={strategyCard} bonusStrategy={bonusStrategy} hasSolTransaction={hasSolTransaction} onOpen={() => setModal("strategy")} />
         <MoundStatusCard
           value={moundTeam?.name ?? "마운드 미설정"}
-          detail={`오늘 상대: ${todayOpponent.name}. 지난 5일간 기록을 보고 선택하세요.`}
+          detail={`오늘 상대: ${todayOpponent.name}.\n상대 기록을 참고하세요`}
           onOpen={() => setModal("mound")}
         />
         <div className="pt-2">
