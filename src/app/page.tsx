@@ -370,28 +370,38 @@ function ManagerGuideCard({
   ];
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-3">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-black text-sol">MY ROOM</p>
-          <h2 className="mt-1 text-lg font-black text-ink">{managerName} 단장의 방</h2>
-        </div>
-        <button type="button" onClick={onOpen} className="shrink-0 rounded-md bg-ink px-3 py-2 text-xs font-black text-white">
-          매뉴얼
-        </button>
-      </div>
-      <div className="mt-3 grid grid-cols-3 gap-2">
-        {achievements.map((item) => (
-          <div key={item.label} className={`rounded-md p-2 text-center text-xs font-black ${item.done ? "bg-blue-50 text-sol" : "bg-slate-100 text-slate-500"}`}>
-            <p>{item.done ? "완료" : "진행중"}</p>
-            <p className="mt-1">{item.label}</p>
+    <section className="relative isolate overflow-hidden rounded-xl border border-slate-200/80 bg-slate-100 shadow-sm">
+      <img
+        src="/dugout/gm-office-desk-v1.png"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover object-[center_62%] opacity-90"
+      />
+      <span className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/84 to-white/62" aria-hidden="true" />
+
+      <div className="relative p-3">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-black tracking-[0.08em] text-sol">MY ROOM</p>
+            <h2 className="mt-1 text-lg font-black text-ink">{managerName} 단장의 방</h2>
           </div>
-        ))}
-      </div>
-      <div className="mt-3 space-y-1 rounded-md bg-slate-50 p-3 text-xs font-bold leading-relaxed text-slate-700">
-        <p>이번 주 최고 운영: 185점, LG 모의 트윈스 일간 랭킹 12위</p>
-        <p>레전드 카드 수집: {collectedCards}장, 미디어데이 초청권까지 6장</p>
-        <p>친구 미니리그: 최근 10일간 4계단 상승, 1위와 18점 차</p>
+          <button type="button" onClick={onOpen} className="shrink-0 rounded-md bg-ink px-3 py-2 text-xs font-black text-white shadow-sm">
+            매뉴얼
+          </button>
+        </div>
+        <div className="mt-3 grid grid-cols-3 gap-2">
+          {achievements.map((item) => (
+            <div key={item.label} className={`rounded-md p-2 text-center text-xs font-black shadow-sm backdrop-blur-[2px] ${item.done ? "bg-blue-50/95 text-sol" : "bg-slate-100/95 text-slate-500"}`}>
+              <p>{item.done ? "완료" : "진행중"}</p>
+              <p className="mt-1">{item.label}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 space-y-1 rounded-md border border-white/70 bg-white/78 p-3 text-xs font-bold leading-relaxed text-slate-700 shadow-sm backdrop-blur-[2px]">
+          <p>이번 주 최고 운영: 185점, LG 모의 트윈스 일간 랭킹 12위</p>
+          <p>레전드 카드 수집: {collectedCards}장, 미디어데이 초청권까지 6장</p>
+          <p>친구 미니리그: 최근 10일간 4계단 상승, 1위와 18점 차</p>
+        </div>
       </div>
     </section>
   );
