@@ -8,12 +8,12 @@ import { playerValueLabel } from "@/data/playerValue";
 import { players } from "@/data/players";
 import { teams } from "@/data/teams";
 import { calculateHitterBaseScore, calculatePlayerStrategyBonus, calculateTeamMoundScore } from "@/engine/scoringEngine";
-import { hiddenGemBonusCap, hiddenGemBonusRate, hitterScoring, strategyBonusCap } from "@/rules/scoringRules";
+import { hitterScoring, strategyBonusCap } from "@/rules/scoringRules";
 import { strategyCards } from "@/rules/strategyCards";
 import { useLocalGameState } from "@/store/useLocalGameState";
 import type { HitterDailyStats, Lineup, Player, StrategyCardId, TeamId, TeamMoundResult } from "@/types/domain";
 
-type ModalName = "manual" | "strategy" | "mound" | "hiddenGem" | null;
+type ModalName = "manual" | "strategy" | "mound" | null;
 
 const strategyIds = Object.keys(strategyCards) as StrategyCardId[];
 const teamIds = teams.map((team) => team.id);
@@ -98,7 +98,6 @@ function strategyFiveDayScore(strategyCardId: StrategyCardId, analysisPlayers: P
     playerIds: analysisPlayers.map((player) => player.id),
     captainId: analysisPlayers[0]?.id ?? "",
     viceCaptainId: analysisPlayers[1]?.id ?? "",
-    hiddenGemId: analysisPlayers.find((player) => player.priceStars <= 3)?.id ?? analysisPlayers[0]?.id ?? "",
     strategyCardId,
     teamMoundPick: moundTeamId
   };
@@ -114,14 +113,16 @@ function strategyFiveDayScore(strategyCardId: StrategyCardId, analysisPlayers: P
   );
 }
 
-function celebrationBadges(playerId: string, captainPickId?: string, hiddenGemPickId?: string, lineup?: Lineup) {
+function celebrationBadges(playerId: string, captainPickId?: string, lineup?: Lineup) {
   const badges = [
     playerId === captainPickId ? "내 캡틴 적중" : "",
     playerId === lineup?.viceCaptainId ? "내 부캡틴 적중" : "",
-    playerId === hiddenGemPickId ? "내 히든젬 적중" : ""
   ].filter(Boolean);
   return [...new Set(badges)];
 }
+
+const DUGOUT_ACTION_BUTTON_CLASS =
+  "inline-flex h-10 w-14 shrink-0 items-center justify-center rounded-md text-sm font-black shadow-lg";
 
 function DugoutCard({ title, value, detail, testId, onOpen }: { title: string; value: string; detail: string; testId: string; onOpen: () => void }) {
   return (
@@ -132,9 +133,50 @@ function DugoutCard({ title, value, detail, testId, onOpen }: { title: string; v
           <p className="mt-1 truncate font-black text-ink">{value}</p>
           <p className="mt-1 text-sm font-semibold text-slate-600">{detail}</p>
         </div>
-        <button type="button" data-testid={testId} onClick={onOpen} className="shrink-0 rounded-md bg-ink px-3 py-2 text-sm font-black text-white">
+        <button type="button" data-testid={testId} onClick={onOpen} className={`${DUGOUT_ACTION_BUTTON_CLASS} bg-ink text-white`}>
           선택
         </button>
+      </div>
+    </section>
+  );
+}
+
+function MoundStatusCard({
+  value,
+  detail,
+  onOpen
+}: {
+  value: string;
+  detail: string;
+  onOpen: () => void;
+}) {
+  return (
+    <section className="relative isolate min-h-[184px] overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 shadow-sm">
+      <img
+        src="/dugout/todays-mound-v1.png"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover object-[62%_center]"
+      />
+      <span className="absolute inset-0 bg-gradient-to-r from-slate-950/96 via-slate-950/73 to-slate-950/20" aria-hidden="true" />
+      <span className="absolute inset-0 bg-gradient-to-t from-slate-950/86 via-slate-950/20 to-slate-950/38" aria-hidden="true" />
+
+      <div className="relative flex min-h-[184px] flex-col justify-between p-4 [text-shadow:0_1px_8px_rgba(0,0,0,0.65)]">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-xs font-black tracking-[0.08em] text-blue-200">오늘의 마운드</p>
+          <button
+            type="button"
+            data-testid="open-mound-modal"
+            onClick={onOpen}
+            className={`${DUGOUT_ACTION_BUTTON_CLASS} border border-white/30 bg-white/95 text-slate-950`}
+          >
+            선택
+          </button>
+        </div>
+        <div className="max-w-[72%]">
+          <p className="text-lg font-black text-white">{value}</p>
+          <p className="mt-1 text-sm font-semibold leading-5 text-slate-200">{detail}</p>
+        </div>
       </div>
     </section>
   );
@@ -152,31 +194,57 @@ function StrategyStatusCard({
   onOpen: () => void;
 }) {
   return (
-    <section className="rounded-lg border border-slate-200 p-3">
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <p className="text-xs font-bold text-slate-500">오늘의 작전</p>
-        <button type="button" data-testid="open-strategy-modal" onClick={onOpen} className="shrink-0 rounded-md bg-ink px-3 py-2 text-sm font-black text-white">
-          선택
-        </button>
-      </div>
+    <section className="relative isolate overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 p-3 shadow-sm">
+      <img
+        src="/dugout/strategy-table-v1.png"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover object-[center_52%]"
+      />
+      <span className="absolute inset-0 bg-gradient-to-r from-slate-950/94 via-slate-950/72 to-slate-950/40" aria-hidden="true" />
+      <span className="absolute inset-0 bg-gradient-to-t from-slate-950/82 via-slate-950/20 to-slate-950/35" aria-hidden="true" />
 
-      <div className="divide-y divide-slate-200 overflow-hidden rounded-md border border-slate-100">
-        <div className="bg-white p-3">
-          <p className="text-xs font-bold text-slate-500">작전 1</p>
-          <p className="mt-1 font-black text-ink">{strategyCard.name}</p>
-          <p className="mt-1 text-sm font-semibold text-slate-600">{strategyCard.description}</p>
+      <div className="relative [text-shadow:0_1px_8px_rgba(0,0,0,0.55)]">
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <p className="text-xs font-black tracking-[0.08em] text-blue-200">오늘의 작전</p>
+          <button
+            type="button"
+            data-testid="open-strategy-modal"
+            onClick={onOpen}
+            className={`${DUGOUT_ACTION_BUTTON_CLASS} border border-white/30 bg-white/95 text-slate-950`}
+          >
+            선택
+          </button>
         </div>
-        <div className={hasSolTransaction ? "bg-white p-3" : "bg-amber-50 p-3"}>
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-bold text-slate-500">작전 2</p>
-            <span className={`rounded px-2 py-1 text-[10px] font-black ${hasSolTransaction ? "bg-blue-50 text-sol" : "bg-amber-100 text-amber-800"}`}>
-              {hasSolTransaction ? "사용 가능" : "SOL 거래 필요"}
-            </span>
+
+        <div className="space-y-2">
+          <div className="rounded-lg border border-white/15 bg-slate-950/72 p-3 shadow-lg backdrop-blur-[2px]">
+            <p className="text-xs font-bold text-slate-300">작전 1</p>
+            <p className="mt-1 font-black text-white">{strategyCard.name}</p>
+            <p className="mt-1 text-sm font-semibold leading-5 text-slate-200">{strategyCard.description}</p>
           </div>
-          <p className="mt-1 font-black text-ink">{hasSolTransaction ? bonusStrategy?.name ?? "선택 필요" : "오늘은 SOL 거래가 없었네요"}</p>
-          <p className="mt-1 text-sm font-semibold text-slate-600">
-            {hasSolTransaction ? bonusStrategy?.description ?? "작전 설정에서 두 번째 작전을 선택하세요." : "거래를 완료하면 작전을 하나 더 선택할 수 있습니다."}
-          </p>
+          <div
+            className={
+              hasSolTransaction
+                ? "rounded-lg border border-white/15 bg-slate-950/72 p-3 shadow-lg backdrop-blur-[2px]"
+                : "rounded-lg border border-amber-200/25 bg-amber-950/70 p-3 shadow-lg backdrop-blur-[2px]"
+            }
+          >
+            <div className="flex items-center justify-between gap-2">
+              <p className={`text-xs font-bold ${hasSolTransaction ? "text-slate-300" : "text-amber-100"}`}>작전 2</p>
+              <span
+                className={`rounded px-2 py-1 text-[10px] font-black ${
+                  hasSolTransaction ? "bg-blue-100/95 text-sol" : "bg-amber-200/95 text-amber-950"
+                }`}
+              >
+                {hasSolTransaction ? "사용 가능" : "SOL 거래 필요"}
+              </span>
+            </div>
+            <p className="mt-1 font-black text-white">{hasSolTransaction ? bonusStrategy?.name ?? "선택 필요" : "오늘은 SOL 거래가 없었네요"}</p>
+            <p className={`mt-1 text-sm font-semibold leading-5 ${hasSolTransaction ? "text-slate-200" : "text-amber-50"}`}>
+              {hasSolTransaction ? bonusStrategy?.description ?? "작전 설정에서 두 번째 작전을 선택하세요." : "거래를 완료하면 작전을 하나 더 선택할 수 있습니다."}
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -262,16 +330,30 @@ function ManagerGuideCard({
 }) {
   if (!manualRead) {
     return (
-      <button type="button" onClick={onOpen} className="w-full rounded-lg border border-blue-100 bg-blue-50 p-3 text-left">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-xs font-black text-sol">입문자 매뉴얼</p>
-            <h2 className="mt-1 text-lg font-black text-ink">단장 취임을 축하합니다</h2>
-            <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-600">
-              단장 이름과 시즌팀을 정한 뒤, 작전·마운드·히든젬으로 보상에 도전하는 방법을 확인해 보세요.
+      <button
+        type="button"
+        onClick={onOpen}
+        className="group relative isolate min-h-[176px] w-full overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 text-left shadow-sm transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol focus-visible:ring-offset-2"
+      >
+        <img
+          src="/dugout/gm-office-desk-v1.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover object-[center_62%] transition duration-500 group-hover:scale-[1.02]"
+        />
+        <span className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/78 to-slate-950/28" aria-hidden="true" />
+        <span className="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-slate-950/15" aria-hidden="true" />
+        <div className="relative flex min-h-[176px] items-end justify-between gap-4 p-4">
+          <div className="max-w-[78%] [text-shadow:0_1px_10px_rgba(0,0,0,0.65)]">
+            <p className="text-xs font-black tracking-[0.08em] text-blue-200">입문자 매뉴얼</p>
+            <h2 className="mt-1 text-xl font-black tracking-tight text-white">단장 취임을 축하합니다</h2>
+            <p className="mt-2 text-sm font-semibold leading-5 text-slate-100">
+              단장 이름과 시즌팀을 정한 뒤, 작전과 마운드로 보상에 도전하는 방법을 확인해 보세요.
             </p>
           </div>
-          <span className="shrink-0 rounded-md bg-sol px-3 py-2 text-xs font-black text-white">시작</span>
+          <span className={`${DUGOUT_ACTION_BUTTON_CLASS} mb-0.5 border border-white/30 bg-white/95 text-slate-950`}>
+            시작
+          </span>
         </div>
       </button>
     );
@@ -330,10 +412,9 @@ function ManagerManual({
 }) {
   const steps = [
     { title: "1. 단장 프로필을 정합니다", body: "처음에는 단장 이름, 구단명, 시즌팀을 정합니다. 이후에는 하단 설정 메뉴에서 언제든 다시 바꿀 수 있습니다." },
-    { title: "2. 라인업을 구성합니다", body: "포수, 내야, 외야 슬롯에 8명을 채우고 캡틴(포인트x2), 부캡틴(x1.5), 히든젬(포인트x2)을 지정합니다. 부상 선수가 있으면 시합 전 교체해서 대체선수로 포인트를 획득합니다." },
+    { title: "2. 라인업을 구성합니다", body: "포수, 내야, 외야 슬롯에 8명을 채우고 캡틴(포인트x2), 부캡틴(x1.5)을 지정합니다. 부상 선수가 있으면 시합 전 교체해서 대체선수로 포인트를 획득합니다." },
     { title: "3. 오늘의 작전을 선택합니다", body: "작전 1은 기본 선택이고, SOL 거래를 완료하면 작전을 하나 더 선택할 수 있습니다. AI 코치 추천을 참고해 보너스가 큰 작전을 고릅니다." },
     { title: "4. 오늘의 마운드를 고릅니다", body: "10개 팀의 오늘 상대와 지난 5일간 기록을 보고, 우리 점수에 가장 도움이 될 마운드를 선택합니다." },
-    { title: "5. 히든젬으로 역전을 노립니다", body: "영입밸류가 낮지만 최근 기록이 좋은 선수를 히든젬으로 선택하고 2배의 포인트를 얻을 수 있습니다." },
     { title: "6. 리그 랭킹과 친구 미니리그에 도전합니다", body: "일별, 월별, 시즌별 랭킹에서 상품을 노리고, 친구 미니리그에서는 순위 변화 그래프로 경쟁 흐름을 확인합니다." },
     { title: "7. 야구지식과 보상을 함께 겨룹니다", body: "선수 컨디션, 상대 팀, 작전 궁합을 읽는 야구지식이 좋은 라인업으로 이어지고, 좋은 라인업은 보상권에 가까워집니다." },
   ];
@@ -366,7 +447,7 @@ function ManagerManual({
         <p className="text-xs font-black text-sol">WELCOME</p>
         <h3 className="mt-1 text-xl font-black text-ink">{managerName} 단장님, 취임을 축하합니다</h3>
         <p className="mt-2 text-sm font-semibold leading-relaxed text-slate-600">
-          이 게임은 매일 KBO 데이터를 읽고 작전, 라인업, 마운드, 히든젬을 선택해 친구와 리그 단장들과 겨루는 판타지 야구 운영 게임입니다.
+          이 게임은 매일 KBO 데이터를 읽고 작전, 라인업, 마운드를 선택해 친구와 리그 단장들과 겨루는 판타지 야구 운영 게임입니다.
         </p>
       </section>
 
@@ -408,7 +489,7 @@ function ManagerManual({
       <section className="rounded-lg border border-slate-200 p-3">
         <h4 className="font-black text-ink">기록별 포인트</h4>
         <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-500">
-          선수 기록 점수에 작전 보너스가 더해지고, 캡틴·부캡틴·히든젬 보너스가 최종 점수에 반영됩니다.
+          선수 기록 점수에 작전 보너스가 더해지고, 캡틴·부캡틴 보너스가 최종 점수에 반영됩니다.
         </p>
         <div className="mt-3 grid grid-cols-2 gap-2">
           {hitterPointRows.map((row) => (
@@ -419,7 +500,7 @@ function ManagerManual({
           ))}
         </div>
         <div className="mt-3 rounded-md bg-blue-50 p-3 text-xs font-semibold leading-relaxed text-slate-700">
-          작전 보너스는 하루 최대 +{strategyBonusCap}점, 히든젬은 기본 점수의 {Math.ceil(hiddenGemBonusRate * 100)}%를 최대 +{hiddenGemBonusCap}점까지 받습니다.
+          작전 보너스는 하루 최대 +{strategyBonusCap}점이며, 캡틴과 부캡틴 선택에 따라 최종 점수가 달라집니다.
         </div>
       </section>
 
@@ -453,7 +534,7 @@ function ManagerManual({
 }
 
 export default function HomePage() {
-  const { state, setFantasyTeamName, setManagerNickname, setSeasonTeamId, setStrategy, setBonusStrategy, setSolTransactionToday, setHiddenGem } = useLocalGameState();
+  const { state, setFantasyTeamName, setManagerNickname, setSeasonTeamId, setStrategy, setBonusStrategy, setSolTransactionToday } = useLocalGameState();
   const [modal, setModal] = useState<ModalName>(null);
   const [manualRead, setManualRead] = useState(false);
   const team = teams.find((item) => item.id === state.seasonTeamId);
@@ -469,8 +550,6 @@ export default function HomePage() {
   const hasSolTransaction = Boolean(state.hasSolTransactionToday);
   const selectedPlayers = (state.lineup?.playerIds ?? []).map((id) => players.find((player) => player.id === id)).filter(Boolean) as Player[];
   const analysisPlayers = selectedPlayers.length > 0 ? selectedPlayers : players.filter((player) => player.teamId === seasonTeamId).slice(0, 8);
-  const hiddenGem = players.find((player) => player.id === state.lineup?.hiddenGemId);
-  const hiddenGemCandidates = selectedPlayers.filter((player) => player.priceStars <= 3 && player.id !== state.lineup?.captainId && player.id !== state.lineup?.viceCaptainId);
   const strategyRankings = strategyIds
     .map((id) => ({ id, score: strategyFiveDayScore(id, analysisPlayers, seasonTeamId, moundTeamId) }))
     .sort((a, b) => b.score - a.score);
@@ -487,14 +566,10 @@ export default function HomePage() {
     .map((player) => ({ player, total: playerFiveDayTotal(player), games: recentPlayerGames(player) }))
     .sort((a, b) => b.total - a.total)
     .slice(0, 3);
-  const aiHiddenGem = hiddenGemCandidates
-    .map((player) => ({ player, avgScore: average(recentPlayerGames(player).map((game) => game.score)) }))
-    .sort((a, b) => b.avgScore - a.avgScore)[0];
   const worstPlayer = [...analysisPlayers]
     .map((player) => ({ player, total: playerFiveDayTotal(player), games: recentPlayerGames(player) }))
     .sort((a, b) => a.total - b.total)[0];
   const celebrationCaptainId = topPlayers[0]?.player.id ?? state.lineup?.captainId;
-  const celebrationHiddenGemId = topPlayers.find(({ player }) => player.id !== celebrationCaptainId && player.priceStars <= 3)?.player.id ?? topPlayers.find(({ player }) => player.id !== celebrationCaptainId)?.player.id ?? state.lineup?.hiddenGemId;
 
   useEffect(() => {
     setManualRead(window.localStorage.getItem(manualReadKey) === "done");
@@ -532,15 +607,11 @@ export default function HomePage() {
           onOpen={() => setModal("manual")}
         />
         <StrategyStatusCard strategyCard={strategyCard} bonusStrategy={bonusStrategy} hasSolTransaction={hasSolTransaction} onOpen={() => setModal("strategy")} />
-        <DugoutCard title="오늘의 마운드" value={moundTeam?.name ?? "마운드 미설정"} detail={`오늘 상대: ${todayOpponent.name}. 지난 5일간 기록을 보고 선택하세요.`} testId="open-mound-modal" onOpen={() => setModal("mound")} />
-        <DugoutCard
-          title="오늘의 히든젬"
-          value={hiddenGem?.name ?? "히든젬 미설정"}
-          detail={hiddenGem ? playerValueLabel(hiddenGem) : "후보의 지난 5일간 기록을 보고 지정하세요."}
-          testId="open-hidden-gem-modal"
-          onOpen={() => setModal("hiddenGem")}
+        <MoundStatusCard
+          value={moundTeam?.name ?? "마운드 미설정"}
+          detail={`오늘 상대: ${todayOpponent.name}. 지난 5일간 기록을 보고 선택하세요.`}
+          onOpen={() => setModal("mound")}
         />
-
         <div className="pt-2">
           <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-sol">지난 5일간 분석</p>
           <div className="space-y-3">
@@ -562,7 +633,7 @@ export default function HomePage() {
             <InsightSection title="Top 3 수훈선수">
               <div className="grid gap-2">
                 {topPlayers.map(({ player, total, games }, index) => {
-                  const badges = celebrationBadges(player.id, celebrationCaptainId, celebrationHiddenGemId, state.lineup);
+                  const badges = celebrationBadges(player.id, celebrationCaptainId, state.lineup);
                   return (
                     <div key={player.id} className="rounded-md bg-slate-50 p-3">
                       <div className="flex items-start justify-between gap-3">
@@ -715,54 +786,6 @@ export default function HomePage() {
           </ModalShell>
         )}
 
-        {modal === "hiddenGem" && (
-          <ModalShell title="히든젬 추천 선수의 지난 5일간 기록" onClose={() => setModal(null)}>
-            {!state.lineup ? (
-              <div className="space-y-3 rounded-lg bg-amber-50 p-3 text-sm font-semibold text-amber-800">
-                <p>라인업을 먼저 구성하면 히든젬 후보를 비교할 수 있습니다.</p>
-                <Link href="/lineup" className="block rounded-md bg-ink p-3 text-center font-black text-white">
-                  라인업 구성하기
-                </Link>
-              </div>
-            ) : (
-              <div className="grid gap-2">
-                {aiHiddenGem && (
-                  <AiRecommendationBox coach="AI 2군감독 추천" title={`${aiHiddenGem.player.name}`}>
-                    영입밸류 3별 이하 후보 중 지난 5일 평균 {aiHiddenGem.avgScore}점으로 가장 안정적인 히든젬 후보입니다.
-                  </AiRecommendationBox>
-                )}
-                {hiddenGemCandidates.map((player) => {
-                  const recent = recentPlayerGames(player);
-                  const avgScore = average(recent.map((game) => game.score));
-                  return (
-                    <button key={player.id} type="button" onClick={() => setHiddenGem(player.id)} className={`rounded-lg border p-3 text-left ${hiddenGem?.id === player.id ? "border-sol bg-blue-50" : "border-slate-200"}`}>
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="font-black">{player.name}</p>
-                          <p className="text-xs font-semibold text-slate-500">{playerValueLabel(player)}</p>
-                        </div>
-                        <span className="rounded bg-slate-100 px-2 py-1 text-xs font-black">5일 평균 {avgScore}점</span>
-                      </div>
-                      <p className="mt-3 text-xs font-black text-slate-500">지난 5일간 기록</p>
-                      <div className="mt-2 grid gap-1 text-xs font-semibold text-slate-600">
-                        {recent.map((game) => (
-                          <div key={`${player.id}-${game.date}-${game.opponent.id}`} className="grid grid-cols-[54px_1fr_44px] gap-2 rounded bg-slate-50 p-2">
-                            <span>{game.date}</span>
-                            <span className="truncate">
-                              vs {game.opponent.name} · {game.stats.singles + game.stats.doubles + game.stats.triples + game.stats.homeRuns}안 {game.stats.homeRuns}홈 {game.stats.rbi}타점
-                            </span>
-                            <span className="text-right font-black">{game.score}점</span>
-                          </div>
-                        ))}
-                      </div>
-                    </button>
-                  );
-                })}
-                {hiddenGemCandidates.length === 0 && <p className="rounded-lg bg-slate-50 p-3 text-sm font-semibold text-slate-600">현재 라인업에는 교체 가능한 영입밸류 3별 이하 후보가 없습니다.</p>}
-              </div>
-            )}
-          </ModalShell>
-        )}
       </div>
     </AppShell>
   );

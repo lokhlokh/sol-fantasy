@@ -14,7 +14,6 @@ const progress = (overrides: Partial<HansotProgress>): HansotProgress => ({
   hitsForTeam: 0,
   homeRunsForTeam: 0,
   rbiForTeam: 0,
-  hiddenGemWins: 0,
   ...overrides
 });
 

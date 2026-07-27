@@ -1,5 +1,5 @@
 import type { HitterDailyStats, Lineup, Player, PlayerScoreBreakdown, StrategyCardId, TeamId, TeamMoundResult } from "@/types/domain";
-import { hiddenGemBonusCap, hiddenGemBonusRate, hitterScoring, strategyBonusCap } from "@/rules/scoringRules";
+import { hitterScoring, strategyBonusCap } from "@/rules/scoringRules";
 
 export function calculateHitterBaseScore(stats: HitterDailyStats): number {
   if (!stats.played) return 0;
@@ -49,11 +49,6 @@ export function calculatePlayerStrategyBonus(player: Player, stats: HitterDailyS
   return primary + bonus;
 }
 
-export function calculateHiddenGemBonus(playerId: string, baseScore: number, lineup: Lineup): number {
-  if (playerId !== lineup.hiddenGemId) return 0;
-  return Math.min(hiddenGemBonusCap, Math.ceil(Math.max(0, baseScore * hiddenGemBonusRate)));
-}
-
 export function calculateTeamMoundScore(result: TeamMoundResult): number {
   const outcome = result.isTie ? 10 : result.winMargin >= 5 ? 50 : result.winMargin > 0 ? 30 : 0;
   const defense = result.errors === 0 ? 10 : result.errors * -10;
@@ -89,7 +84,6 @@ export function scoreLineup(params: {
     const rawStrategyBonus = calculatePlayerStrategyBonus(player, stats, baseScore, params.lineup);
     const strategyBonus = Math.min(remainingStrategyCap, rawStrategyBonus);
     remainingStrategyCap -= strategyBonus;
-    const hiddenGemBonus = calculateHiddenGemBonus(player.id, baseScore, params.lineup);
     const multiplier =
       player.id === params.lineup.captainId ? 2 : player.id === params.lineup.viceCaptainId && !captainPlayed ? 2 : player.id === params.lineup.viceCaptainId ? 1.5 : 1;
 
@@ -97,9 +91,8 @@ export function scoreLineup(params: {
       playerId: player.id,
       baseScore,
       strategyBonus,
-      hiddenGemBonus,
       multiplier,
-      finalScore: Math.ceil((baseScore + strategyBonus + hiddenGemBonus) * multiplier),
+      finalScore: Math.ceil((baseScore + strategyBonus) * multiplier),
       played: stats.played
     };
   });
@@ -111,7 +104,6 @@ export function scoreLineup(params: {
     playerBreakdowns,
     moundScore,
     strategyBonus: playerBreakdowns.reduce((sum, row) => sum + row.strategyBonus, 0),
-    hiddenGemBonus: playerBreakdowns.reduce((sum, row) => sum + row.hiddenGemBonus, 0),
     hittersScore,
     totalScore: Math.ceil(hittersScore + moundScore)
   };

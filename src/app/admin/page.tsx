@@ -159,7 +159,7 @@ export default function AdminPage() {
           />
         </SettingCard>
 
-        <SettingCard title="알림 설정" description="라인업 마감, 히든젬 추천, 보상권 진입 상황을 놓치지 않도록 알려드립니다.">
+        <SettingCard title="알림 설정" description="라인업 마감과 보상권 진입 상황을 놓치지 않도록 알려드립니다.">
           <div className="space-y-2">
             <ToggleRow label="게임 알림 받기" description="라인업 마감과 결과 공개 알림을 받습니다." checked={pushEnabled} onChange={setPushEnabled} />
             <ToggleRow label="혜택 소식 받기" description="Super SOL, 신한투자증권, 신한라이프 연계 혜택을 받습니다." checked={marketingEnabled} onChange={setMarketingEnabled} />

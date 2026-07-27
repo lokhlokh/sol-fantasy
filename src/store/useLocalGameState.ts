@@ -82,11 +82,6 @@ export function useLocalGameState() {
           lineup: current.lineup ? { ...current.lineup, bonusStrategyCardId } : current.lineup
         })),
       setSolTransactionToday: (hasSolTransactionToday: boolean) => updateState((current) => ({ ...current, hasSolTransactionToday })),
-      setHiddenGem: (hiddenGemId: string) =>
-        updateState((current) => ({
-          ...current,
-          lineup: current.lineup ? { ...current.lineup, hiddenGemId } : current.lineup
-        })),
       setSeed: (seed: number) => updateState((current) => ({ ...current, seed })),
       reset: () => updateState(() => defaultState)
     }),

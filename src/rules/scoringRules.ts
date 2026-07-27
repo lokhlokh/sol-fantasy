@@ -12,8 +12,6 @@ export const hitterScoring = {
 } as const;
 
 export const strategyBonusCap = 20;
-export const hiddenGemBonusRate = 0.3;
-export const hiddenGemBonusCap = 10;
 export const captainMultiplier = 2;
 export const viceCaptainMultiplier = 1.5;
 export const totalBudget = 50;

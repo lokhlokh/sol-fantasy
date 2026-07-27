@@ -34,14 +34,12 @@ export function recommendLineup(players: Player[], seasonTeamId: TeamId): { line
     budget = sorted.reduce((sum, player) => sum + playerRecruitValueStars(player), 0);
   }
 
-  const hiddenGem = [...sorted].filter((player) => playerRecruitValueStars(player) <= 3).sort((a, b) => playerValueStars(b) - playerValueStars(a))[0];
-  const byValue = [...sorted].filter((player) => player.id !== hiddenGem.id).sort((a, b) => playerValueStars(b) - playerValueStars(a));
+  const byValue = [...sorted].sort((a, b) => playerValueStars(b) - playerValueStars(a));
   const lineup: Lineup = {
     seasonTeamId,
     playerIds: sorted.map((player) => player.id),
-    captainId: byValue[0].id,
-    viceCaptainId: byValue.find((player) => player.id !== byValue[0].id)?.id ?? sorted.find((player) => player.id !== hiddenGem.id && player.id !== byValue[0].id)?.id ?? hiddenGem.id,
-    hiddenGemId: hiddenGem.id,
+    captainId: byValue[0]?.id ?? "",
+    viceCaptainId: byValue.find((player) => player.id !== byValue[0]?.id)?.id ?? "",
     strategyCardId: "POWER_HIT",
     teamMoundPick: seasonTeamId
   };
@@ -54,7 +52,7 @@ export function recommendLineup(players: Player[], seasonTeamId: TeamId): { line
     explanations: [
       `50성 예산 안에서 밸류 효율을 우선했습니다. 이 라인업은 ${validation.budget}성을 사용합니다.`,
       `${seasonTeamId} 선수 3명 이상을 포함해 시즌팀 조건을 충족했습니다.`,
-      `${hiddenGem.name}은 영입밸류 ${playerRecruitValueStars(hiddenGem)}별이면서 밸류가 좋아 히든젬으로 추천했습니다.`
+      `밸류가 좋은 선수를 캡틴과 부캡틴으로 추천했습니다.`
     ]
   };
 }

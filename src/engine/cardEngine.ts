@@ -28,7 +28,6 @@ export type HansotProgress = {
   hitsForTeam: number;
   homeRunsForTeam: number;
   rbiForTeam: number;
-  hiddenGemWins: number;
   records?: HansotGameRecord[];
 };
 
@@ -61,13 +60,12 @@ export const mockCardProgress: HansotProgress[] = [
     hitsForTeam: 42,
     homeRunsForTeam: 6,
     rbiForTeam: 28,
-    hiddenGemWins: 5,
     records: [
-      { date: "2026-04-01", opponent: "LG", result: "7:4 승", atBats: 4, hits: 2, homeRuns: 1, rbi: 3, runs: 2, steals: 0, fantasyPoint: 31, roleBonus: "히든젬", note: "첫 히든젬 적중" },
+      { date: "2026-04-01", opponent: "LG", result: "7:4 승", atBats: 4, hits: 2, homeRuns: 1, rbi: 3, runs: 2, steals: 0, fantasyPoint: 31, note: "첫 경기 활약" },
       { date: "2026-04-07", opponent: "DOOSAN", result: "5:6 패", atBats: 5, hits: 2, homeRuns: 0, rbi: 1, runs: 1, steals: 1, fantasyPoint: 18, note: "멀티히트" },
       { date: "2026-04-13", opponent: "SAMSUNG", result: "8:2 승", atBats: 4, hits: 3, homeRuns: 1, rbi: 4, runs: 2, steals: 0, fantasyPoint: 42, roleBonus: "캡틴", note: "우리 팀 최고 기여" },
       { date: "2026-04-21", opponent: "SSG", result: "3:1 승", atBats: 3, hits: 1, homeRuns: 0, rbi: 1, runs: 0, steals: 0, fantasyPoint: 11, note: "결승타" },
-      { date: "2026-05-02", opponent: "KT", result: "6:5 승", atBats: 4, hits: 2, homeRuns: 1, rbi: 2, runs: 1, steals: 0, fantasyPoint: 29, roleBonus: "히든젬", note: "9회 역전 홈런" },
+      { date: "2026-05-02", opponent: "KT", result: "6:5 승", atBats: 4, hits: 2, homeRuns: 1, rbi: 2, runs: 1, steals: 0, fantasyPoint: 29, note: "9회 역전 홈런" },
       { date: "2026-05-18", opponent: "LOTTE", result: "4:4 무", atBats: 4, hits: 1, homeRuns: 0, rbi: 0, runs: 1, steals: 1, fantasyPoint: 12, note: "동점 득점" }
     ]
   },
@@ -84,7 +82,6 @@ export const mockCardProgress: HansotProgress[] = [
     hitsForTeam: 71,
     homeRunsForTeam: 9,
     rbiForTeam: 46,
-    hiddenGemWins: 3,
     records: [
       { date: "2026-04-02", opponent: "KIWOOM", result: "9:3 승", atBats: 5, hits: 3, homeRuns: 1, rbi: 4, runs: 2, steals: 0, fantasyPoint: 44, roleBonus: "캡틴", note: "영입 첫날 대폭발" },
       { date: "2026-04-09", opponent: "NC", result: "4:2 승", atBats: 4, hits: 2, homeRuns: 0, rbi: 1, runs: 1, steals: 0, fantasyPoint: 17, note: "찬스 연결" },
@@ -108,15 +105,14 @@ export const mockCardProgress: HansotProgress[] = [
     hitsForTeam: 88,
     homeRunsForTeam: 15,
     rbiForTeam: 62,
-    hiddenGemWins: 11,
     records: [
-      { date: "2026-04-18", opponent: "HANWHA", result: "6:2 승", atBats: 4, hits: 2, homeRuns: 1, rbi: 3, runs: 1, steals: 0, fantasyPoint: 34, roleBonus: "히든젬", note: "영입 후 첫 홈런" },
+      { date: "2026-04-18", opponent: "HANWHA", result: "6:2 승", atBats: 4, hits: 2, homeRuns: 1, rbi: 3, runs: 1, steals: 0, fantasyPoint: 34, note: "영입 후 첫 홈런" },
       { date: "2026-04-25", opponent: "LG", result: "7:8 패", atBats: 5, hits: 3, homeRuns: 0, rbi: 2, runs: 2, steals: 1, fantasyPoint: 31, note: "끝까지 추격" },
       { date: "2026-05-03", opponent: "NC", result: "9:5 승", atBats: 4, hits: 2, homeRuns: 2, rbi: 5, runs: 3, steals: 0, fantasyPoint: 58, roleBonus: "캡틴", note: "멀티홈런" },
-      { date: "2026-05-14", opponent: "KIA", result: "4:1 승", atBats: 3, hits: 1, homeRuns: 0, rbi: 1, runs: 1, steals: 2, fantasyPoint: 24, roleBonus: "히든젬", note: "발로 만든 점수" },
+      { date: "2026-05-14", opponent: "KIA", result: "4:1 승", atBats: 3, hits: 1, homeRuns: 0, rbi: 1, runs: 1, steals: 2, fantasyPoint: 24, note: "발로 만든 점수" },
       { date: "2026-05-28", opponent: "LOTTE", result: "11:3 승", atBats: 5, hits: 4, homeRuns: 1, rbi: 4, runs: 3, steals: 1, fantasyPoint: 66, roleBonus: "캡틴", note: "최고 하루 기여도" },
       { date: "2026-06-08", opponent: "SSG", result: "2:3 패", atBats: 4, hits: 1, homeRuns: 0, rbi: 0, runs: 0, steals: 1, fantasyPoint: 10, note: "도루 보너스" },
-      { date: "2026-06-21", opponent: "DOOSAN", result: "7:4 승", atBats: 4, hits: 2, homeRuns: 1, rbi: 3, runs: 2, steals: 0, fantasyPoint: 37, roleBonus: "히든젬", note: "보상권 진입 견인" }
+      { date: "2026-06-21", opponent: "DOOSAN", result: "7:4 승", atBats: 4, hits: 2, homeRuns: 1, rbi: 3, runs: 2, steals: 0, fantasyPoint: 37, note: "보상권 진입 견인" }
     ]
   }
 ];

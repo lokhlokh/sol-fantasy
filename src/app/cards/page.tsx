@@ -152,7 +152,7 @@ function HansotStoryCard({ playerId }: { playerId: string }) {
         </div>
       </div>
       <p className="mt-3 rounded-md bg-slate-100 p-2 text-xs font-semibold text-slate-600">
-        캡틴 {progress.captainCount}회 · 히든젬 적중 {progress.hiddenGemWins}회 · 누적 기여 {progress.totalContribution}점
+        캡틴 {progress.captainCount}회 · 누적 기여 {progress.totalContribution}점
       </p>
     </Link>
   );

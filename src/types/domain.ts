@@ -18,7 +18,10 @@ export type Player = {
   teamId: TeamId;
   positions: Position[];
   primaryPosition: Position;
+  /** 시즌 시작 시 영입한 장부 가격입니다. 라인업 영입 예산 계산에 사용합니다. */
   priceStars: number;
+  /** 주간 시장 가격 변동이 반영된 현재 가격입니다. 0.5 단위 원본값을 보존합니다. */
+  marketPriceStars?: number;
   recentForm: number;
   projectedScore: number;
   isRookie?: boolean;
@@ -59,7 +62,6 @@ export type Lineup = {
   playerIds: string[];
   captainId: string;
   viceCaptainId: string;
-  hiddenGemId: string;
   strategyCardId: StrategyCardId;
   bonusStrategyCardId?: StrategyCardId;
   teamMoundPick: TeamId;
@@ -83,7 +85,6 @@ export type PlayerScoreBreakdown = {
   playerId: string;
   baseScore: number;
   strategyBonus: number;
-  hiddenGemBonus: number;
   multiplier: number;
   finalScore: number;
   played: boolean;

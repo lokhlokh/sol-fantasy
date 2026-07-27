@@ -1,6 +1,6 @@
 import { PlayerPortrait } from "@/components/PlayerPortrait";
 import { positionLabels } from "@/data/labels";
-import { playerValueLabel } from "@/data/playerValue";
+import { playerMarketPriceStars, playerValueLabel } from "@/data/playerValue";
 import { teams } from "@/data/teams";
 import type { Player } from "@/types/domain";
 
@@ -22,7 +22,7 @@ export function PlayerCard({ player, active, onClick }: { player: Player; active
               {team?.name ?? player.teamId} · {positionLabels[player.primaryPosition]}
             </p>
           </div>
-          <span className="rounded-md bg-gold px-2 py-1 text-xs font-black text-ink">영입밸류 {player.priceStars}별</span>
+          <span className="rounded-md bg-gold px-2 py-1 text-xs font-black text-ink">현재 {playerMarketPriceStars(player)}별</span>
         </div>
         <div className="mt-2 flex justify-between gap-3 text-xs text-slate-600">
           <span>최근감 {player.recentForm}</span>

@@ -61,12 +61,11 @@ function roleLabels(playerId: string, lineup: Lineup) {
   const labels: string[] = [];
   if (playerId === lineup.captainId) labels.push("캡틴");
   if (playerId === lineup.viceCaptainId) labels.push("부캡틴");
-  if (playerId === lineup.hiddenGemId) labels.push("히든젬");
   return labels;
 }
 
 function roleInflation(row: PlayerScoreBreakdown) {
-  const beforeRole = Math.ceil(row.baseScore + row.strategyBonus + row.hiddenGemBonus);
+  const beforeRole = Math.ceil(row.baseScore + row.strategyBonus);
   return Math.max(0, row.finalScore - beforeRole);
 }
 
@@ -242,7 +241,6 @@ export default function ResultPage() {
                   <th className="px-2 py-2 font-black">기록</th>
                   <th className="px-2 py-2 text-right font-black">기본</th>
                   <th className="px-2 py-2 text-right font-black">작전</th>
-                  <th className="px-2 py-2 text-right font-black">히든젬</th>
                   <th className="px-2 py-2 text-right font-black">역할</th>
                   <th className="px-2 py-2 text-right font-black">최종</th>
                 </tr>
@@ -267,7 +265,6 @@ export default function ResultPage() {
                       <td className="px-2 py-2 font-semibold leading-relaxed text-slate-600">{statLine(stats)}</td>
                       <td className="px-2 py-2 text-right font-black text-ink">{breakdown.baseScore}</td>
                       <td className="px-2 py-2 text-right font-black text-ink">{signed(breakdown.strategyBonus)}</td>
-                      <td className="px-2 py-2 text-right font-black text-ink">{signed(breakdown.hiddenGemBonus)}</td>
                       <td className="px-2 py-2 text-right font-black text-ink">{signed(roleInflation(breakdown))}</td>
                       <td className="px-2 py-2 text-right font-black text-sol">{breakdown.finalScore}</td>
                     </tr>

@@ -24,15 +24,7 @@ describe("roster validator", () => {
     expect(validateRoster({ ...valid, playerIds: Array(8).fill(valid.playerIds[0]) }, players).errors).toContain("DUPLICATE_PLAYER");
   });
 
-  it("rejects hidden gem over 3 stars", () => {
-    const expensive = players.find((player) => player.priceStars > 3 && !valid.playerIds.includes(player.id))!;
-    const playerIds = [expensive.id, ...valid.playerIds.slice(1)];
-    expect(validateRoster({ ...valid, playerIds, captainId: playerIds[1], viceCaptainId: playerIds[2], hiddenGemId: expensive.id }, players).errors).toContain(
-      "HIDDEN_GEM_PRICE_TOO_HIGH"
-    );
-  });
-
   it("rejects role conflict", () => {
-    expect(validateRoster({ ...valid, hiddenGemId: valid.captainId }, players).errors).toContain("ROLE_CONFLICT");
+    expect(validateRoster({ ...valid, viceCaptainId: valid.captainId }, players).errors).toContain("ROLE_CONFLICT");
   });
 });

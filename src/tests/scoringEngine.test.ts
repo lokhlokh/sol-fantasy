@@ -18,7 +18,6 @@ const lineup: Lineup = {
   playerIds: ["KIA-01", "KIA-02"],
   captainId: "KIA-01",
   viceCaptainId: "KIA-02",
-  hiddenGemId: "KIA-02",
   strategyCardId: "POWER_HIT",
   teamMoundPick: "KIA"
 };
@@ -78,32 +77,6 @@ describe("scoring engine golden cases", () => {
     expect(result.playerBreakdowns[1].multiplier).toBe(2);
   });
 
-  it("calculates hidden gem bonus", () => {
-    const result = scoreLineup({
-      lineup,
-      players: [
-        player,
-        { ...player, id: "KIA-02", primaryPosition: "CENTER_INFIELD" }
-      ],
-      hitterStats: { "KIA-01": goldenStats, "KIA-02": { ...goldenStats, singles: 10, doubles: 0, homeRuns: 0 } },
-      moundResults: { KIA: { teamId: "KIA", winMargin: 0, isTie: true, errors: 0, runsAllowed: 3 } } as never
-    });
-    expect(result.playerBreakdowns[1].hiddenGemBonus).toBe(10);
-  });
-
-  it("rounds hidden gem fractional bonus up", () => {
-    const result = scoreLineup({
-      lineup,
-      players: [
-        player,
-        { ...player, id: "KIA-02", primaryPosition: "CENTER_INFIELD" }
-      ],
-      hitterStats: { "KIA-01": goldenStats, "KIA-02": { ...goldenStats, singles: 0, doubles: 1, homeRuns: 0, rbi: 0, runs: 0, walks: 0, strikeouts: 0 } },
-      moundResults: { KIA: { teamId: "KIA", winMargin: 0, isTie: true, errors: 0, runsAllowed: 3 } } as never
-    });
-    expect(result.playerBreakdowns[1].hiddenGemBonus).toBe(2);
-  });
-
   it("calculates power hit bonus", () => {
     expect(calculatePlayerStrategyBonus(player, { ...goldenStats, doubles: 1, homeRuns: 1 }, 23, lineup)).toBe(3);
   });
@@ -126,7 +99,7 @@ describe("scoring engine golden cases", () => {
 
   it("rounds vice captain fractional final score up", () => {
     const result = scoreLineup({
-      lineup: { ...lineup, captainId: "KIA-01", viceCaptainId: "KIA-02", hiddenGemId: "KIA-01" },
+      lineup: { ...lineup, captainId: "KIA-01", viceCaptainId: "KIA-02" },
       players: [
         player,
         { ...player, id: "KIA-02", primaryPosition: "CENTER_INFIELD" }

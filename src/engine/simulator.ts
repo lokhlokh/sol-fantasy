@@ -60,7 +60,7 @@ export function simulateDailyBoard(lineup: Lineup, seed = 20260707) {
       id: user.id,
       nickname: user.nickname,
       score: Math.ceil(score.totalScore + index * 3),
-      badges: index === 0 ? ["오늘의 감독"] : index % 2 ? ["AI 킬러"] : ["히든젬 사인"]
+      badges: index === 0 ? ["오늘의 감독"] : index % 2 ? ["AI 킬러"] : ["캡틴 사인"]
     };
   });
   return { ...results, userScore, aiLineup: ai.lineup, aiScore, league };

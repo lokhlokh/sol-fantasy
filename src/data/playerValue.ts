@@ -8,6 +8,14 @@ export function playerRecruitValueStars(player: Player) {
   return player.priceStars;
 }
 
+export function playerMarketPriceAmountStars(player: Player) {
+  return player.marketPriceStars ?? player.priceStars;
+}
+
+export function playerMarketPriceStars(player: Player) {
+  return Math.floor(playerMarketPriceAmountStars(player));
+}
+
 export function playerValueLabel(player: Player) {
-  return `밸류: ${playerValueStars(player)}별 (영입밸류: ${playerRecruitValueStars(player)}별)`;
+  return `밸류: ${playerValueStars(player)}별 · 장부 ${playerRecruitValueStars(player)}별 · 현재 ${playerMarketPriceStars(player)}별`;
 }

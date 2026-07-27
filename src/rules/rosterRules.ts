@@ -10,4 +10,6 @@ export const requiredSlots: Record<Position, number> = {
 
 export const rosterSize = 8;
 export const minimumSeasonTeamPlayers = 3;
-export const maxBudgetStars = 50;
+export const initialBudgetStars = 50;
+export const maxBudgetStars = initialBudgetStars;
+export const currentTeamValueFloorStars = 50;

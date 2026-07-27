@@ -89,11 +89,11 @@ const periodRewards: Record<
 };
 
 const friendTrend = [
-  { name: "홍길동", color: "#2563eb", ranks: [4, 4, 5, 4, 3, 4, 4, 3, 3, 4] },
-  { name: "민지", color: "#dc2626", ranks: [2, 3, 3, 2, 2, 1, 2, 2, 1, 1] },
-  { name: "도윤", color: "#16a34a", ranks: [3, 2, 2, 3, 4, 3, 3, 4, 2, 2] },
-  { name: "서연", color: "#9333ea", ranks: [1, 1, 1, 1, 1, 2, 1, 1, 4, 3] },
-  { name: "지훈", color: "#f59e0b", ranks: [5, 5, 4, 5, 5, 5, 5, 5, 5, 5] }
+  { name: "홍길동", color: "#2563eb", face: "🤪", ranks: [4, 4, 5, 4, 3, 4, 4, 3, 3, 4] },
+  { name: "민지", color: "#dc2626", face: "😝", ranks: [2, 3, 3, 2, 2, 1, 2, 2, 1, 1] },
+  { name: "도윤", color: "#16a34a", face: "🤓", ranks: [3, 2, 2, 3, 4, 3, 3, 4, 2, 2] },
+  { name: "서연", color: "#9333ea", face: "😵‍💫", ranks: [1, 1, 1, 1, 1, 2, 1, 1, 4, 3] },
+  { name: "지훈", color: "#f59e0b", face: "🤡", ranks: [5, 5, 4, 5, 5, 5, 5, 5, 5, 5] }
 ];
 
 function teamShortName(teamId: TeamId) {
@@ -184,7 +184,7 @@ function friendRows(myScore: number): RankRow[] {
     { id: "f1", rank: 0, nickname: "민지 강공야구", score: Math.ceil(myScore + 23), note: "친구" },
     { id: "f2", rank: 0, nickname: "도윤 매직라인업", score: Math.ceil(myScore + 11), note: "친구" },
     { id: "f3", rank: 0, nickname: "서연 불펜장인", score: Math.ceil(myScore - 7), note: "친구" },
-    { id: "f4", rank: 0, nickname: "지훈 히든젬", score: Math.ceil(myScore - 18), note: "친구" }
+    { id: "f4", rank: 0, nickname: "지훈 역전승", score: Math.ceil(myScore - 18), note: "친구" }
   ]
     .sort((a, b) => b.score - a.score)
     .map((row, index) => ({ ...row, rank: index + 1 }));
@@ -218,7 +218,7 @@ function FriendTrendChart() {
   const y = (rank: number) => padding + ((rank - 1) * (height - padding * 2)) / 4;
 
   return (
-    <div className="rounded-lg border border-slate-200 p-3">
+    <div className="rounded-lg border border-white/70 bg-white/95 p-3 shadow-lg backdrop-blur-sm">
       <div className="mb-2 flex items-center justify-between">
         <p className="text-sm font-black text-ink">지난 10일 랭킹 변화</p>
         <p className="text-[11px] font-bold text-slate-500">위로 갈수록 높은 랭킹</p>
@@ -234,13 +234,25 @@ function FriendTrendChart() {
         ))}
         {friendTrend.map((line) => {
           const points = line.ranks.map((rank, index) => `${x(index)},${y(rank)}`).join(" ");
-          return <polyline key={line.name} points={points} fill="none" stroke={line.color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />;
+          const endX = x(line.ranks.length - 1);
+          const endY = y(line.ranks[line.ranks.length - 1]);
+          return (
+            <g key={line.name}>
+              <polyline points={points} fill="none" stroke={line.color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx={endX} cy={endY} r="9" fill="white" stroke={line.color} strokeWidth="2" />
+              <text x={endX} y={endY + 4} textAnchor="middle" fontSize="11" aria-label={`${line.name} 현재 얼굴`}>
+                {line.face}
+              </text>
+            </g>
+          );
         })}
       </svg>
       <div className="grid grid-cols-2 gap-2">
         {friendTrend.map((line) => (
           <div key={line.name} className="flex items-center gap-2 text-xs font-bold text-slate-600">
-            <span className="h-2.5 w-2.5 rounded-full" style={{ background: line.color }} />
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-sm" role="img" aria-label={`${line.name} 얼굴`}>
+              {line.face}
+            </span>
             {line.name}
           </div>
         ))}
@@ -275,7 +287,7 @@ function FriendLeagueGuide({
   const steps = [
     { title: "1. 친구 미니리그 만들기", body: "리그 이름을 정하고 초대할 친구 수를 선택합니다. 유효 참가자 5명 이상이면 보상 대상 리그가 됩니다." },
     { title: "2. 카톡으로 초대 링크 공유", body: "초대 링크를 복사해 카카오톡 단체방에 보내면 친구들이 바로 참가할 수 있습니다. 참가한 친구는 같은 날짜의 라인업 점수로 랭킹을 겨룹니다." },
-    { title: "3. 친구끼리 즐기는 포인트", body: "누가 캡틴을 잘 골랐는지, 히든젬이 터졌는지, 어제보다 랭킹이 얼마나 올랐는지로 매일 가볍게 놀릴 거리와 복수전을 만들 수 있습니다." }
+    { title: "3. 친구끼리 즐기는 포인트", body: "누가 캡틴을 잘 골랐는지, 어제보다 랭킹이 얼마나 올랐는지로 매일 가볍게 놀릴 거리와 복수전을 만들 수 있습니다." }
   ];
 
   return (
@@ -313,31 +325,43 @@ function FriendLeagueGuide({
 
 function FriendLeagueSection({ rows, leagueName, onOpenGuide }: { rows: RankRow[]; leagueName: string; onOpenGuide: () => void }) {
   return (
-    <section className="rounded-lg border border-slate-200 p-3">
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-black text-ink">{leagueName || defaultFriendLeagueName}</h2>
-          <p className="mt-1 text-xs font-semibold text-slate-500">일간 1위에게 SOL라이프 미니리그 보험쿠폰 1,000원을 수여합니다. 유효 참가자 5명 이상 리그가 대상입니다.</p>
-        </div>
-        <button type="button" onClick={onOpenGuide} className="shrink-0 rounded-md bg-ink px-3 py-2 text-xs font-black text-white">
-          만드는 법
-        </button>
-      </div>
-      <div className="space-y-2">
-        {rows.map((row) => (
-          <div key={row.id} className={`flex items-center justify-between rounded-md p-3 ${row.isMe ? "border border-sol bg-blue-50" : "bg-slate-50"}`}>
-            <div>
-              <p className="font-black text-ink">
-                {row.rank}. {row.nickname}
-              </p>
-              <p className={`text-xs font-bold ${row.isMe ? "text-sol" : "text-slate-500"}`}>{row.note}</p>
-            </div>
-            <p className="text-sm font-black text-sol">{row.score}점</p>
+    <section className="relative isolate overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 p-4 text-white shadow-sm">
+      <img
+        src="/dugout/friend-mini-league-v1.png"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover object-[center_46%]"
+      />
+      <span className="absolute inset-0 bg-gradient-to-r from-slate-950/96 via-slate-950/82 to-slate-950/38" aria-hidden="true" />
+      <span className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/30 to-slate-950/55" aria-hidden="true" />
+
+      <div className="relative">
+        <div className="mb-3 flex items-start justify-between gap-3 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]">
+          <div>
+            <p className="text-[10px] font-black tracking-[0.16em] text-amber-200">FRIENDS · NO MERCY</p>
+            <h2 className="text-lg font-black text-white">{leagueName || defaultFriendLeagueName}</h2>
+            <p className="mt-1 text-xs font-semibold text-slate-200">일간 1위에게 SOL라이프 미니리그 보험쿠폰 1,000원을 수여합니다. 유효 참가자 5명 이상 리그가 대상입니다.</p>
           </div>
-        ))}
-      </div>
-      <div className="mt-3">
-        <FriendTrendChart />
+          <button type="button" onClick={onOpenGuide} className="shrink-0 rounded-md border border-white/20 bg-slate-950/75 px-3 py-2 text-xs font-black text-white shadow-lg backdrop-blur-sm">
+            만드는 법
+          </button>
+        </div>
+        <div className="space-y-2">
+          {rows.map((row) => (
+            <div key={row.id} className={`flex items-center justify-between rounded-md p-3 shadow-sm ${row.isMe ? "border border-blue-400 bg-blue-50/95" : "border border-white/60 bg-white/90"}`}>
+              <div>
+                <p className="font-black text-ink">
+                  {row.rank}. {row.nickname}
+                </p>
+                <p className={`text-xs font-bold ${row.isMe ? "text-sol" : "text-slate-500"}`}>{row.note}</p>
+              </div>
+              <p className="text-sm font-black text-sol">{row.score}점</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3">
+          <FriendTrendChart />
+        </div>
       </div>
     </section>
   );

@@ -1,4 +1,5 @@
 import type { Player, Position, TeamId } from "@/types/domain";
+import { currentMockMarketWeek, weeklyMarketPriceStepStars } from "@/rules/marketRules";
 import { teams } from "./teams";
 
 const positionPlan: Position[] = [
@@ -45,6 +46,8 @@ export const players: Player[] = teams.flatMap((team, teamIndex) =>
     const priceStars = cheapCycle || (((teamIndex * 4 + index * 3) % 13) + 3);
     const recentForm = (teamIndex * 17 + index * 11) % 101;
     const projectedScore = Math.ceil(8 + recentForm / 6 + (16 - priceStars) * 0.45);
+    const marketDirection = recentForm >= 67 ? 1 : recentForm <= 33 ? -1 : 0;
+    const marketPriceStars = Math.max(1, priceStars + marketDirection * weeklyMarketPriceStepStars * currentMockMarketWeek);
 
     return {
       id: `${team.id}-${serial}`,
@@ -53,6 +56,7 @@ export const players: Player[] = teams.flatMap((team, teamIndex) =>
       positions: extraPosition(primaryPosition, index),
       primaryPosition,
       priceStars: Math.min(15, priceStars),
+      marketPriceStars,
       recentForm,
       projectedScore: Math.min(30, projectedScore),
       isRookie: index % 8 === 0

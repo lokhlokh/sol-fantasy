@@ -68,7 +68,6 @@ function HansotDetail({ playerId }: { playerId: string }) {
             <p className="rounded-md bg-slate-100 p-2">안타 {progress.hitsForTeam}개</p>
             <p className="rounded-md bg-slate-100 p-2">홈런 {progress.homeRunsForTeam}개</p>
             <p className="rounded-md bg-slate-100 p-2">타점 {progress.rbiForTeam}점</p>
-            <p className="rounded-md bg-slate-100 p-2">히든젬 적중 {progress.hiddenGemWins}회</p>
           </div>
         </section>
 
