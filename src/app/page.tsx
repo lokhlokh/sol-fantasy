@@ -153,7 +153,7 @@ function MoundStatusCard({
   return (
     <section className="relative isolate min-h-[184px] overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 shadow-sm">
       <img
-        src="/dugout/todays-mound-v1.png"
+        src="/dugout/todays-mound-v1.webp"
         alt=""
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover object-[62%_center]"
@@ -196,7 +196,7 @@ function StrategyStatusCard({
   return (
     <section className="relative isolate overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 p-3 shadow-sm">
       <img
-        src="/dugout/strategy-table-v1.png"
+        src="/dugout/strategy-table-v1.webp"
         alt=""
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover object-[center_52%]"
@@ -337,7 +337,7 @@ function ManagerGuideCard({
         className="group relative isolate min-h-[176px] w-full overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 text-left shadow-sm transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol focus-visible:ring-offset-2"
       >
         <img
-          src="/dugout/gm-office-desk-v1.png"
+          src="/dugout/gm-office-desk-v1.webp"
           alt=""
           aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover object-[center_62%] transition duration-500 group-hover:scale-[1.02]"
@@ -369,7 +369,7 @@ function ManagerGuideCard({
   return (
     <section className="relative isolate overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 shadow-sm">
       <img
-        src="/dugout/gm-office-desk-v1.png"
+        src="/dugout/gm-office-desk-v1.webp"
         alt=""
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover object-[center_62%] opacity-90"

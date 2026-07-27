@@ -8,12 +8,12 @@ import { players } from "@/data/players";
 import { teams } from "@/data/teams";
 import { getCardLevel, mockCardProgress } from "@/engine/cardEngine";
 import { useCustomLegendCards } from "@/store/useCustomLegendCards";
+import { useLocalGameState } from "@/store/useLocalGameState";
 import type { CustomLegendCard } from "@/types/legendMaker";
 import { getCustomLegendProfile } from "@/data/customLegendProfiles";
 import type { TeamId } from "@/types/domain";
 
 const legendCollectionRanking = {
-  managerName: "홍길동",
   collected: 18,
   rank: 42,
   top30Cutline: 23,
@@ -42,7 +42,7 @@ function teamOf(teamId: TeamId) {
   return teams.find((team) => team.id === teamId);
 }
 
-function LegendCollectionRankingCard() {
+function LegendCollectionRankingCard({ managerName }: { managerName: string }) {
   const needForMediaDay = Math.max(legendCollectionRanking.top30Cutline - legendCollectionRanking.collected, 0);
   const progress = Math.min(Math.ceil((legendCollectionRanking.collected / legendCollectionRanking.top30Cutline) * 100), 100);
 
@@ -52,7 +52,7 @@ function LegendCollectionRankingCard() {
         <div>
           <p className="text-xs font-black text-amber-700">레전드 카드 수집랭킹</p>
           <h3 className="mt-1 text-xl font-black text-ink">
-            {legendCollectionRanking.rank}위 {legendCollectionRanking.managerName} 단장
+            {legendCollectionRanking.rank}위 {managerName} 단장
           </h3>
           <p className="mt-1 text-sm font-bold text-slate-600">
             현재 {legendCollectionRanking.collected}장 수집 · 1위 {legendCollectionRanking.leaderCollected}장
@@ -71,8 +71,8 @@ function LegendCollectionRankingCard() {
       </div>
       <p className="mt-3 rounded-md bg-amber-50 p-2 text-sm font-black text-amber-900">
         {needForMediaDay > 0
-          ? `${legendCollectionRanking.managerName} 단장님은 ${needForMediaDay}장을 더 모으면 다음 시즌 미디어 데이 초청권에 도전할 수 있습니다.`
-          : `${legendCollectionRanking.managerName} 단장님은 현재 다음 시즌 미디어 데이 초청권입니다.`}
+          ? `${managerName} 단장님은 ${needForMediaDay}장을 더 모으면 다음 시즌 미디어 데이 초청권에 도전할 수 있습니다.`
+          : `${managerName} 단장님은 현재 다음 시즌 미디어 데이 초청권입니다.`}
       </p>
     </article>
   );
@@ -194,12 +194,14 @@ function ShinhanCardAdSection() {
 
 export default function CardsPage() {
   const { cards: customLegendCards } = useCustomLegendCards();
+  const { state } = useLocalGameState();
+  const managerName = state.managerNickname ?? "홍길동";
 
   return (
     <AppShell title="선수카드">
       <div className="space-y-5">
         <section className="space-y-3">
-          <LegendCollectionRankingCard />
+          <LegendCollectionRankingCard managerName={managerName} />
           <div className="space-y-3">
             {customLegendCards.map((card) => <CustomLegendCardView key={card.id} card={card} />)}
           </div>

@@ -104,7 +104,7 @@ function BudgetTimeline({ selectedPlayers, ledgerCost, floor = initialBudgetStar
   return (
     <section className="relative isolate overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 p-4 text-white shadow-sm">
       <img
-        src="/dugout/candidates/owner-skybox-v1.png"
+        src="/dugout/candidates/owner-skybox-v1.webp"
         alt=""
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover object-[center_42%]"
@@ -302,7 +302,7 @@ export default function LineupPage() {
       <div className="space-y-4">
         <section className="relative isolate overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 p-4 text-white shadow-sm">
           <img
-            src="/dugout/strategy-coaches-wall-v1.png"
+            src="/dugout/strategy-coaches-wall-v1.webp"
             alt=""
             aria-hidden="true"
             className="absolute inset-0 h-full w-full object-cover object-[center_42%]"
@@ -431,7 +431,7 @@ export default function LineupPage() {
 
         <section className="relative isolate overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 p-4 text-white shadow-sm">
           <img
-            src="/dugout/strategy-table-v1.png"
+            src="/dugout/strategy-table-v1.webp"
             alt=""
             aria-hidden="true"
             className="absolute inset-0 h-full w-full object-cover object-[center_48%]"
@@ -470,7 +470,7 @@ export default function LineupPage() {
 
         <section className="relative isolate overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 p-4 text-white shadow-sm">
           <img
-            src="/dugout/gm-office-desk-v1.png"
+            src="/dugout/gm-office-desk-v1.webp"
             alt=""
             aria-hidden="true"
             className="absolute inset-0 h-full w-full object-cover object-[center_58%]"

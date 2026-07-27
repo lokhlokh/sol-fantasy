@@ -89,11 +89,11 @@ const periodRewards: Record<
 
 function friendTrendRows(managerName: string) {
   return [
-    { name: managerName, color: "#2563eb", face: "🤪", ranks: [4, 4, 5, 4, 3, 4, 4, 3, 3, 4] },
-    { name: "민지", color: "#dc2626", face: "😝", ranks: [2, 3, 3, 2, 2, 1, 2, 2, 1, 1] },
-    { name: "도윤", color: "#16a34a", face: "🤓", ranks: [3, 2, 2, 3, 4, 3, 3, 4, 2, 2] },
-    { name: "서연", color: "#9333ea", face: "😵‍💫", ranks: [1, 1, 1, 1, 1, 2, 1, 1, 4, 3] },
-    { name: "지훈", color: "#f59e0b", face: "🤡", ranks: [5, 5, 4, 5, 5, 5, 5, 5, 5, 5] }
+    { name: managerName, color: "#2563eb", face: "🤪", ranks: [4, 4, 5, 4, 3, 4] },
+    { name: "민지", color: "#dc2626", face: "😝", ranks: [2, 3, 3, 2, 2, 1] },
+    { name: "도윤", color: "#16a34a", face: "🤓", ranks: [3, 2, 2, 3, 4, 3] },
+    { name: "서연", color: "#9333ea", face: "😵‍💫", ranks: [1, 1, 1, 1, 1, 2] },
+    { name: "지훈", color: "#f59e0b", face: "🤡", ranks: [5, 5, 4, 5, 5, 5] }
   ];
 }
 
@@ -213,16 +213,17 @@ function gapText(
 
 function FriendTrendChart({ managerName }: { managerName: string }) {
   const trendRows = friendTrendRows(managerName);
+  const weekDays = ["화", "수", "목", "금", "토", "일"];
   const width = 328;
   const height = 150;
   const padding = 20;
-  const x = (index: number) => padding + (index * (width - padding * 2)) / 9;
+  const x = (index: number) => padding + (index * (width - padding * 2)) / (weekDays.length - 1);
   const y = (rank: number) => padding + ((rank - 1) * (height - padding * 2)) / 4;
 
   return (
     <div className="rounded-lg border border-white/70 bg-white/95 p-3 shadow-lg backdrop-blur-sm">
       <div className="mb-2 flex items-center justify-between">
-        <p className="text-sm font-black text-ink">지난 10일 랭킹 변화</p>
+        <p className="text-sm font-black text-ink">이번 주 랭킹 변화</p>
         <p className="text-[11px] font-bold text-slate-500">위로 갈수록 높은 랭킹</p>
       </div>
       <svg viewBox={`0 0 ${width} ${height}`} className="h-40 w-full">
@@ -233,6 +234,11 @@ function FriendTrendChart({ managerName }: { managerName: string }) {
               {rank}
             </text>
           </g>
+        ))}
+        {weekDays.map((day, index) => (
+          <text key={day} x={x(index)} y={height - 2} textAnchor="middle" className="fill-slate-400 text-[10px] font-bold">
+            {day}
+          </text>
         ))}
         {trendRows.map((line) => {
           const points = line.ranks.map((rank, index) => `${x(index)},${y(rank)}`).join(" ");
@@ -309,7 +315,7 @@ function FriendLeagueGuide({
       <section className="rounded-lg bg-blue-50 p-3">
         <p className="text-xs font-black text-sol">FRIEND LEAGUE</p>
         <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-600">
-          친구 미니리그는 지인끼리 같은 판타지 야구 점수를 비교하고, 하루 랭킹과 10일 랭킹 변화를 보며 경쟁하는 소규모 리그입니다.
+          친구 미니리그는 지인끼리 같은 판타지 야구 점수를 비교하고, 하루 랭킹과 주간 랭킹 변화를 보며 경쟁하는 소규모 리그입니다.
         </p>
       </section>
       {steps.map((step) => (
@@ -329,20 +335,18 @@ function FriendLeagueSection({ rows, leagueName, managerName, onOpenGuide }: { r
   return (
     <section className="relative isolate overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 p-4 text-white shadow-sm">
       <img
-        src="/dugout/friend-mini-league-v1.png"
+        src="/dugout/friend-mini-league-v4.webp"
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover object-[center_46%]"
+        className="pointer-events-none absolute right-1 top-14 z-0 h-20 w-28 object-contain object-bottom opacity-100"
       />
-      <span className="absolute inset-0 bg-gradient-to-r from-slate-950/96 via-slate-950/82 to-slate-950/38" aria-hidden="true" />
-      <span className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/30 to-slate-950/55" aria-hidden="true" />
 
       <div className="relative">
-        <div className="mb-3 flex items-start justify-between gap-3 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]">
+        <div className="relative z-10 mb-3 flex min-h-[132px] items-start justify-between gap-3 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]">
           <div>
             <p className="text-[10px] font-black tracking-[0.16em] text-amber-200">FRIENDS · NO MERCY</p>
             <h2 className="text-lg font-black text-white">{leagueName || defaultFriendLeagueName}</h2>
-            <p className="mt-1 text-xs font-semibold text-slate-200">일간 1위에게 SOL라이프 미니리그 보험쿠폰 1,000원을 수여합니다. 유효 참가자 5명 이상 리그가 대상입니다.</p>
+            <p className="mt-1 text-xs font-semibold text-slate-200">주간 1위에게는 SOL 판타지 적금의 금리를 0.02%p 추가로 드리는 우대권을 부여합니다.</p>
           </div>
           <button type="button" onClick={onOpenGuide} className="shrink-0 rounded-md border border-white/20 bg-slate-950/75 px-3 py-2 text-xs font-black text-white shadow-lg backdrop-blur-sm">
             만드는 법

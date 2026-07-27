@@ -57,6 +57,19 @@ function signed(value: number) {
   return value > 0 ? `+${value}` : `${value}`;
 }
 
+function formatPastDate(daysAgo: number) {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  const parts = new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    month: "numeric",
+    day: "numeric"
+  }).formatToParts(date);
+  const month = parts.find((part) => part.type === "month")?.value ?? "";
+  const day = parts.find((part) => part.type === "day")?.value ?? "";
+  return `${month}월${day}일`;
+}
+
 function roleLabels(playerId: string, lineup: Lineup) {
   const labels: string[] = [];
   if (playerId === lineup.captainId) labels.push("캡틴");
@@ -157,6 +170,7 @@ export default function ResultPage() {
   ].filter(Boolean);
   const moundResult = game.moundResults[effectiveLineup.teamMoundPick];
   const moundScore = calculateTeamMoundScore(moundResult);
+  const statDate = formatPastDate(2);
   const nonTeamTop10 = players
     .filter((player) => !selectedIds.has(player.id))
     .map((player) => baseScoreRow(player, game.hitterStats[player.id] ?? emptyStats))
@@ -200,25 +214,23 @@ export default function ResultPage() {
         <section className="space-y-3 rounded-lg border border-slate-200 p-3">
           <div>
             <h2 className="flex flex-wrap items-center gap-2 text-lg font-black text-ink">
-              <span>7월8일</span>
+              <span>{statDate}</span>
               {seasonTeam && <TeamBadge team={seasonTeam} />}
               <span>{userTeamName} 스탯</span>
             </h2>
             <p className="mt-1 text-xs font-semibold text-slate-500">{strategyNames.join(" · ")}</p>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div className="rounded-md bg-slate-50 p-2">
-              <p className="text-[11px] font-bold text-slate-500">타자 점수</p>
-              <p className="text-lg font-black text-ink">{score.hittersScore}</p>
+          <div className="rounded-lg bg-sol px-4 py-3 text-white shadow-sm" aria-label={`최종 총점 ${score.totalScore}점`}>
+            <div className="flex items-baseline gap-2 whitespace-nowrap">
+              <span className="text-sm font-black text-blue-100">최종 총점</span>
+              <strong className="text-4xl font-black leading-none tracking-tight">{score.totalScore}</strong>
+              <span className="text-sm font-black text-blue-100">점</span>
             </div>
-            <div className="rounded-md bg-slate-50 p-2">
-              <p className="text-[11px] font-bold text-slate-500">마운드</p>
-              <p className="text-lg font-black text-ink">{score.moundScore}</p>
-            </div>
-            <div className="rounded-md bg-sol p-2 text-white">
-              <p className="text-[11px] font-bold text-blue-100">총점</p>
-              <p className="text-lg font-black">{score.totalScore}</p>
+            <div className="mt-2 flex items-center gap-3 text-xs font-bold text-blue-100">
+              <span>타자 {score.hittersScore}</span>
+              <span aria-hidden="true">+</span>
+              <span>마운드 {score.moundScore}</span>
             </div>
           </div>
 
