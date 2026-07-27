@@ -316,6 +316,7 @@ function AiRecommendationBox({ coach, title, children }: { coach: string; title:
 function ManagerGuideCard({
   managerName,
   manualRead,
+  teamCreated,
   lineupReady,
   hasSolTransaction,
   collectedCards,
@@ -323,12 +324,15 @@ function ManagerGuideCard({
 }: {
   managerName: string;
   manualRead: boolean;
+  teamCreated: boolean;
   lineupReady: boolean;
   hasSolTransaction: boolean;
   collectedCards: number;
   onOpen: () => void;
 }) {
-  if (!manualRead) {
+  // 팀을 만든 뒤에는 취임 안내 대신 단장의 방 요약을 유지합니다.
+  // 매뉴얼을 읽지 않았더라도 팀 선택이 완료되면 운영 화면으로 진입한 상태입니다.
+  if (!manualRead && !teamCreated) {
     return (
       <button
         type="button"
@@ -601,6 +605,7 @@ export default function HomePage() {
         <ManagerGuideCard
           managerName={managerId}
           manualRead={manualRead}
+          teamCreated={Boolean(state.seasonTeamId)}
           lineupReady={Boolean(state.lineup)}
           hasSolTransaction={hasSolTransaction}
           collectedCards={3}
