@@ -10,20 +10,47 @@ export type GameState = {
   lineup?: Lineup;
   strategyCardId?: StrategyCardId;
   bonusStrategyCardId?: StrategyCardId;
-  hasSolTransactionToday?: boolean;
+  hasSolTransactionThisMonth?: boolean;
+  solTransactionMonth?: string;
   teamMoundPick?: TeamId;
   seed: number;
 };
 
 const key = "sol-fantasy-mock-state";
-const defaultState: GameState = { fantasyTeamName: "AI킬러", managerNickname: "홍길동", hasSolTransactionToday: false, seed: 20260707 };
+function currentMonthKey() {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit" }).formatToParts(new Date());
+  const year = parts.find((part) => part.type === "year")?.value ?? "";
+  const month = parts.find((part) => part.type === "month")?.value ?? "";
+  return `${year}-${month}`;
+}
+
+const defaultState: GameState = {
+  fantasyTeamName: "AI킬러",
+  managerNickname: "홍길동",
+  hasSolTransactionThisMonth: false,
+  solTransactionMonth: currentMonthKey(),
+  seed: 20260707
+};
 
 function readStoredState(): GameState {
   if (typeof window === "undefined") return defaultState;
 
   try {
     const raw = window.localStorage.getItem(key);
-    return raw ? { ...defaultState, ...JSON.parse(raw) } : defaultState;
+    if (!raw) return defaultState;
+
+    const stored = JSON.parse(raw) as Partial<GameState> & { hasSolTransactionToday?: boolean };
+    const month = currentMonthKey();
+    const hasTransactionThisMonth = stored.solTransactionMonth
+      ? stored.solTransactionMonth === month && Boolean(stored.hasSolTransactionThisMonth)
+      : Boolean(stored.hasSolTransactionThisMonth ?? stored.hasSolTransactionToday);
+
+    return {
+      ...defaultState,
+      ...stored,
+      hasSolTransactionThisMonth: hasTransactionThisMonth,
+      solTransactionMonth: month
+    };
   } catch {
     return defaultState;
   }
@@ -90,7 +117,8 @@ export function useLocalGameState() {
           bonusStrategyCardId,
           lineup: current.lineup ? { ...current.lineup, bonusStrategyCardId } : current.lineup
         })),
-      setSolTransactionToday: (hasSolTransactionToday: boolean) => updateState((current) => ({ ...current, hasSolTransactionToday })),
+      setSolTransactionThisMonth: (hasSolTransactionThisMonth: boolean) =>
+        updateState((current) => ({ ...current, hasSolTransactionThisMonth, solTransactionMonth: currentMonthKey() })),
       setSeed: (seed: number) => updateState((current) => ({ ...current, seed })),
       reset: () => updateState(() => defaultState)
     }),

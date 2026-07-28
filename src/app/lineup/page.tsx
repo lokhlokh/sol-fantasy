@@ -116,8 +116,7 @@ function BudgetTimeline({ selectedPlayers, ledgerCost, floor = initialBudgetStar
         <div className="mb-3 flex items-start justify-between gap-3 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]">
           <div>
             <p className="text-[10px] font-black tracking-[0.16em] text-blue-200">MY TEAM ASSET</p>
-            <h2 className="mt-1 text-xl font-black tracking-tight">팀 자산 현황</h2>
-            <p className="mt-1 text-xs font-semibold leading-5 text-slate-200">남은 영입 예산과 현재 시장가 기준 팀 자산을 한눈에 확인하세요.</p>
+            <h2 className="mt-1 text-xl font-black tracking-tight">팀 가치 변화</h2>
           </div>
           <span className="shrink-0 rounded-full border border-white/20 bg-white/15 px-2.5 py-1 text-[10px] font-black text-blue-100 backdrop-blur-sm">시즌 기준 {floor}★</span>
         </div>
@@ -311,13 +310,9 @@ export default function LineupPage() {
           <span className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-slate-950/55" aria-hidden="true" />
 
           <div className="relative">
-            <div className="mb-4 flex items-start justify-between gap-3">
-              <div className="max-w-[78%] [text-shadow:0_1px_8px_rgba(0,0,0,0.55)]">
-                <p className="text-[10px] font-black tracking-[0.16em] text-blue-200">AI DUGOUT · LINEUP LAB</p>
-                <h2 className="mt-1 text-xl font-black tracking-tight">단장님을 위한 추천 라인업</h2>
-                <p className="mt-1 text-xs font-semibold leading-5 text-slate-200">예산·최근감·시즌팀 조건을 분석해 세 가지 전술안을 준비했습니다.</p>
-              </div>
-              <span className="shrink-0 rounded-full border border-white/20 bg-white/15 px-2.5 py-1 text-[10px] font-black text-blue-100 backdrop-blur-sm">3가지 안</span>
+            <div className="mb-4 [text-shadow:0_1px_8px_rgba(0,0,0,0.55)]">
+              <p className="text-[10px] font-black tracking-[0.16em] text-blue-200">AI DUGOUT · LINEUP LAB</p>
+              <h2 className="text-xl font-black tracking-tight">추천 라인업</h2>
             </div>
 
             <div className="grid gap-2">
@@ -350,7 +345,7 @@ export default function LineupPage() {
                     <span className="text-sm font-black">중폭개편</span>
                     <span className="rounded bg-white/15 px-1.5 py-0.5 text-[10px] font-black text-blue-100">밸런스형</span>
                   </span>
-                  <span className="mt-1 block text-xs font-semibold text-blue-100">핵심 선수 3명을 지키고 조합을 보정</span>
+                  <span className="mt-1 block text-xs font-semibold text-blue-100">기여도 TOP 3 선수만 유지하고 라인업을 최적화</span>
                 </span>
                 <ArrowRight className="shrink-0 text-blue-100 transition group-hover:translate-x-0.5 group-hover:text-white" size={17} />
               </button>
@@ -367,7 +362,7 @@ export default function LineupPage() {
                     <span className="text-sm font-black">부진자개편</span>
                     <span className="rounded bg-white/15 px-1.5 py-0.5 text-[10px] font-black text-emerald-100">컨디션 회복</span>
                   </span>
-                  <span className="mt-1 block text-xs font-semibold text-emerald-100">최근 기여도가 낮은 선수만 교체</span>
+                  <span className="mt-1 block text-xs font-semibold text-emerald-100">부상 및 저기여 선수만 교체</span>
                 </span>
                 <ArrowRight className="shrink-0 text-emerald-100 transition group-hover:translate-x-0.5 group-hover:text-white" size={17} />
               </button>
@@ -470,7 +465,7 @@ export default function LineupPage() {
 
         <section className="relative isolate overflow-hidden rounded-xl border border-slate-900/10 bg-slate-950 p-4 text-white shadow-sm">
           <img
-            src="/dugout/gm-office-desk-v1.webp"
+            src="/dugout/trainer-rehab-v1.webp"
             alt=""
             aria-hidden="true"
             className="absolute inset-0 h-full w-full object-cover object-[center_58%]"

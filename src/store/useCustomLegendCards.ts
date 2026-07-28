@@ -21,6 +21,8 @@ type FolderCardManifest = {
   }>;
 };
 
+let folderCardsPromise: Promise<CustomLegendCard[]> | null = null;
+
 function readCards(): CustomLegendCard[] {
   if (typeof window === "undefined") return [];
   try {
@@ -36,28 +38,35 @@ function writeCards(cards: CustomLegendCard[]) {
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
-async function readFolderCards(): Promise<CustomLegendCard[]> {
-  try {
-    const response = await fetch("/legend-packages/index.json", { cache: "no-store" });
-    if (!response.ok) return [];
-    const manifest = (await response.json()) as FolderCardManifest;
-    return (manifest.cards ?? []).filter((item) => item.id && item.name && item.cardImageUrl).map((item) => ({
-      id: item.id,
-      name: item.name,
-      teamId: item.team as CustomLegendCard["teamId"],
-      position: item.position,
-      nickname: "",
-      style: item.style ?? "",
-      prompt: item.prompt ?? "",
-      cardImage: item.cardImageUrl,
-      portraitImage: item.portraitImageUrl || item.cardImageUrl,
-      createdAt: item.createdAt || new Date().toISOString(),
-      source: "folder" as const,
-      sourceFile: item.sourceFile,
-    }));
-  } catch {
-    return [];
-  }
+async function readFolderCards(forceRefresh = false): Promise<CustomLegendCard[]> {
+  if (forceRefresh) folderCardsPromise = null;
+  if (folderCardsPromise) return folderCardsPromise;
+
+  folderCardsPromise = fetch("/legend-packages/index.json", { cache: "default" })
+    .then(async (response) => {
+      if (!response.ok) return [];
+      const manifest = (await response.json()) as FolderCardManifest;
+      return (manifest.cards ?? []).filter((item) => item.id && item.name && item.cardImageUrl).map((item) => ({
+        id: item.id,
+        name: item.name,
+        teamId: item.team as CustomLegendCard["teamId"],
+        position: item.position,
+        nickname: "",
+        style: item.style ?? "",
+        prompt: item.prompt ?? "",
+        cardImage: item.cardImageUrl,
+        portraitImage: item.portraitImageUrl || item.cardImageUrl,
+        createdAt: item.createdAt || new Date().toISOString(),
+        source: "folder" as const,
+        sourceFile: item.sourceFile,
+      }));
+    })
+    .catch(() => {
+      folderCardsPromise = null;
+      return [];
+    });
+
+  return folderCardsPromise;
 }
 
 function mergeCards(folderCards: CustomLegendCard[], localCards: CustomLegendCard[]) {

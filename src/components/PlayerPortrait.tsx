@@ -8,11 +8,11 @@ type PlayerPortraitProps = {
 
 const facePortraits = Array.from(
   { length: 12 },
-  (_, index) => `/mock-player-faces/faces/face-${String(index + 1).padStart(2, "0")}.png`
+  (_, index) => `/mock-player-faces/faces/face-${String(index + 1).padStart(2, "0")}.webp`
 );
 const uniformedPortraits = Array.from(
   { length: 12 },
-  (_, index) => `/mock-player-faces/uniformed/{TEAM_ID}/face-${String(index + 1).padStart(2, "0")}.png`
+  (_, index) => `/mock-player-faces/uniformed/{TEAM_ID}/face-${String(index + 1).padStart(2, "0")}.webp`
 );
 const uniformedTeamIds = new Set(["KIA", "LG", "DOOSAN", "SAMSUNG", "SSG", "LOTTE", "HANWHA", "NC", "KIWOOM", "KT"]);
 
@@ -47,6 +47,10 @@ export function PlayerPortrait({ player, teamColor, size = "lg" }: PlayerPortrai
         <img
           src={uniformedPortrait}
           alt={`${player.name} 모의 선수 사진`}
+          width={512}
+          height={512}
+          loading="lazy"
+          decoding="async"
           className="h-full w-full object-cover"
         />
       </div>

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Home, Medal, PanelsTopLeft, Settings, Sparkles, Trophy } from "lucide-react";
 
 const nav = [
@@ -20,7 +21,15 @@ export function AppShell({ title, children }: { title: ReactNode; children: Reac
         <div className="relative flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-white bg-white shadow-sm [clip-path:polygon(4%_2%,96%_2%,96%_52%,50%_98%,4%_52%)]">
-              <img src="/brand/shinhan-sol-kbo-2026.png" alt="신한 SOL KBO 리그 2026" className="h-full w-full object-cover" />
+              <Image
+                src="/brand/shinhan-sol-kbo-2026.png"
+                alt="신한 SOL KBO 리그 2026"
+                width={574}
+                height={581}
+                sizes="48px"
+                priority
+                className="h-full w-full object-cover"
+              />
             </div>
             <div className="min-w-0">
               <p className="truncate text-[11px] font-black tracking-tight text-sol">신한 SOL 판타지리그 2026</p>

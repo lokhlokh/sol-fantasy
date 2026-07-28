@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { AppShell } from "@/components/AppShell";
 import { PlayerPortrait } from "@/components/PlayerPortrait";
 import { positionLabels } from "@/data/labels";
@@ -81,10 +82,31 @@ function LegendCollectionRankingCard({ managerName }: { managerName: string }) {
 function CustomLegendCardView({ card }: { card: CustomLegendCard }) {
   const team = teamOf(card.teamId);
   const profile = getCustomLegendProfile(card);
+  const isFolderCard = card.source === "folder";
   return (
     <Link href={`/cards/custom/${card.id}`} className="block rounded-lg border border-amber-200 bg-amber-50 p-3 transition hover:border-amber-400 hover:bg-amber-100">
       <div className="flex gap-3">
-        <img src={card.portraitImage || card.cardImage} alt={`${card.name} 레전드 카드`} className="h-16 w-16 shrink-0 rounded-lg border border-slate-200 object-cover object-top" />
+        {isFolderCard ? (
+          <Image
+            src={card.cardImage}
+            alt={`${card.name} 레전드 카드`}
+            width={64}
+            height={64}
+            sizes="64px"
+            loading="lazy"
+            className="h-16 w-16 shrink-0 rounded-lg border border-slate-200 object-cover object-top"
+          />
+        ) : (
+          <img
+            src={card.cardImage}
+            alt={`${card.name} 레전드 카드`}
+            width={64}
+            height={64}
+            loading="lazy"
+            decoding="async"
+            className="h-16 w-16 shrink-0 rounded-lg border border-slate-200 object-cover object-top"
+          />
+        )}
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div>

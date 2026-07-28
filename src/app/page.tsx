@@ -240,7 +240,7 @@ function StrategyStatusCard({
                 {hasSolTransaction ? "사용 가능" : "SOL 거래 필요"}
               </span>
             </div>
-            <p className="mt-1 font-black text-white">{hasSolTransaction ? bonusStrategy?.name ?? "선택 필요" : "오늘은 SOL 거래가 없었네요"}</p>
+            <p className="mt-1 font-black text-white">{hasSolTransaction ? bonusStrategy?.name ?? "선택 필요" : "이번 달은 SOL 거래가 없었네요"}</p>
             <p className={`mt-1 text-sm font-semibold leading-5 ${hasSolTransaction ? "text-slate-200" : "text-amber-50"}`}>
               {hasSolTransaction ? bonusStrategy?.description ?? "작전 설정에서 두 번째 작전을 선택하세요." : "거래를 완료하면 작전을 하나 더 선택할 수 있습니다."}
             </p>
@@ -273,6 +273,27 @@ function InsightSection({ title, children }: { title: string; children: ReactNod
       <h2 className="mb-2 font-black">{title}</h2>
       {children}
     </section>
+  );
+}
+
+function RecentScoreStrip({ games, warning = false }: { games: Array<{ date: string; score: number }>; warning?: boolean }) {
+  return (
+    <div
+      className={`mt-2 grid grid-cols-5 overflow-hidden rounded-md border ${warning ? "border-red-100 bg-white/75" : "border-slate-200 bg-white"}`}
+      aria-label="최근 5일 선수 기록"
+    >
+      {games.map((game, index) => (
+        <div
+          key={`${game.date}-${index}`}
+          className={`min-w-0 border-r px-1 py-1 text-center last:border-r-0 ${warning ? "border-red-100" : "border-slate-200"}`}
+        >
+          <span className={`block truncate text-[9px] font-bold ${warning ? "text-red-500" : "text-slate-500"}`}>
+            {game.date.replace(/\s/g, "").replace(/\.$/, "")}
+          </span>
+          <strong className={`block text-xs font-black ${warning ? "text-red-700" : "text-ink"}`}>{game.score}점</strong>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -425,7 +446,7 @@ function ManagerManual({
   const steps = [
     { title: "1. 단장 프로필을 정합니다", body: "처음에는 단장 이름, 구단명, 시즌팀을 정합니다. 이후에는 하단 설정 메뉴에서 언제든 다시 바꿀 수 있습니다." },
     { title: "2. 라인업을 구성합니다", body: "포수, 내야, 외야 슬롯에 8명을 채우고 캡틴(포인트x2), 부캡틴(x1.5)을 지정합니다. 부상 선수가 있으면 시합 전 교체해서 대체선수로 포인트를 획득합니다." },
-    { title: "3. 오늘의 작전을 선택합니다", body: "작전 1은 기본 선택이고, SOL 거래를 완료하면 작전을 하나 더 선택할 수 있습니다. AI 코치 추천을 참고해 보너스가 큰 작전을 고릅니다." },
+    { title: "3. 오늘의 작전을 선택합니다", body: "작전 1은 기본 선택이고, 이번 달 SOL 거래를 완료하면 작전을 하나 더 선택할 수 있습니다. AI 코치 추천을 참고해 보너스가 큰 작전을 고릅니다." },
     { title: "4. 오늘의 마운드를 고릅니다", body: "10개 팀의 오늘 상대와 지난 5일간 기록을 보고, 우리 점수에 가장 도움이 될 마운드를 선택합니다." },
     { title: "6. 리그 랭킹과 친구 미니리그에 도전합니다", body: "일별, 월별, 시즌별 랭킹에서 상품을 노리고, 친구 미니리그에서는 순위 변화 그래프로 경쟁 흐름을 확인합니다." },
     { title: "7. 야구지식과 보상을 함께 겨룹니다", body: "선수 컨디션, 상대 팀, 작전 궁합을 읽는 야구지식이 좋은 라인업으로 이어지고, 좋은 라인업은 보상권에 가까워집니다." },
@@ -546,7 +567,7 @@ function ManagerManual({
 }
 
 export default function HomePage() {
-  const { state, setFantasyTeamName, setManagerNickname, setSeasonTeamId, setStrategy, setBonusStrategy, setSolTransactionToday } = useLocalGameState();
+  const { state, setFantasyTeamName, setManagerNickname, setSeasonTeamId, setStrategy, setBonusStrategy, setSolTransactionThisMonth } = useLocalGameState();
   const [modal, setModal] = useState<ModalName>(null);
   const [manualRead, setManualRead] = useState(false);
   const team = teams.find((item) => item.id === state.seasonTeamId);
@@ -559,7 +580,7 @@ export default function HomePage() {
   const todayOpponent = opponentFor(moundTeamId, 0);
   const strategyCard = strategyCards[strategyCardId];
   const bonusStrategy = state.bonusStrategyCardId ? strategyCards[state.bonusStrategyCardId] : undefined;
-  const hasSolTransaction = Boolean(state.hasSolTransactionToday);
+  const hasSolTransaction = Boolean(state.hasSolTransactionThisMonth);
   const selectedPlayers = (state.lineup?.playerIds ?? []).map((id) => players.find((player) => player.id === id)).filter(Boolean) as Player[];
   const analysisPlayers = selectedPlayers.length > 0 ? selectedPlayers : players.filter((player) => player.teamId === seasonTeamId).slice(0, 8);
   const strategyRankings = strategyIds
@@ -654,27 +675,29 @@ export default function HomePage() {
                 {topPlayers.map(({ player, total, games }, index) => {
                   const badges = celebrationBadges(player.id, celebrationCaptainId, state.lineup);
                   return (
-                    <div key={player.id} className="rounded-md bg-slate-50 p-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex min-w-0 items-start gap-3">
-                          <PlayerPortrait player={player} teamColor={teamColor(player.teamId)} size="sm" />
-                          <div className="min-w-0">
-                            <p className="truncate font-black">
-                              {index + 1}. {player.name}
-                            </p>
-                            {badges.length > 0 && (
-                              <div className="mt-1 flex flex-wrap gap-1">
-                                {badges.map((badge) => (
-                                  <span key={badge} className="rounded bg-sol px-2 py-0.5 text-[10px] font-black text-white">
-                                    {badge}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                            <p className="mt-1 text-xs font-semibold text-slate-500">{games.map((game) => `${game.date} ${game.score}점`).join(" · ")}</p>
+                    <div key={player.id} className="rounded-md border border-slate-200 bg-slate-50 p-2">
+                      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-2">
+                        <PlayerPortrait player={player} teamColor={teamColor(player.teamId)} size="sm" />
+                        <div className="min-w-0">
+                          <div className="flex items-start justify-between gap-1.5">
+                            <div className="flex min-w-0 items-center gap-1.5">
+                              <p className="min-w-0 truncate text-sm font-black">
+                                {index + 1}. {player.name}
+                              </p>
+                              {badges.length > 0 && (
+                                <div className="flex shrink-0 items-center gap-1">
+                                  {badges.map((badge) => (
+                                    <span key={badge} className="whitespace-nowrap rounded bg-sol px-1.5 py-0.5 text-[9px] font-black text-white">
+                                      {badge}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            <span className="shrink-0 rounded bg-white px-2 py-1 text-xs font-black">{total}점</span>
                           </div>
+                          <RecentScoreStrip games={games} />
                         </div>
-                        <span className="rounded bg-white px-2 py-1 text-xs font-black">{total}점</span>
                       </div>
                     </div>
                   );
@@ -684,16 +707,18 @@ export default function HomePage() {
 
             {worstPlayer && (
               <InsightSection title="기여가 부족한 선수">
-                <div className="rounded-md bg-red-50 p-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex min-w-0 items-start gap-3">
-                      <PlayerPortrait player={worstPlayer.player} teamColor={teamColor(worstPlayer.player.teamId)} size="sm" />
-                      <div className="min-w-0">
-                        <p className="truncate font-black text-red-900">{worstPlayer.player.name}</p>
-                        <p className="mt-1 text-xs font-semibold text-red-700">{worstPlayer.games.map((game) => `${game.date} ${game.score}점`).join(" · ")}</p>
+                <div className="rounded-md border border-red-100 bg-red-50 p-2">
+                  <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-2">
+                    <PlayerPortrait player={worstPlayer.player} teamColor={teamColor(worstPlayer.player.teamId)} size="sm" />
+                    <div className="min-w-0">
+                      <div className="flex items-start justify-between gap-1.5">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-black text-red-900">{worstPlayer.player.name}</p>
+                        </div>
+                        <span className="shrink-0 rounded bg-white px-2 py-1 text-xs font-black text-red-700">{worstPlayer.total}점</span>
                       </div>
+                      <RecentScoreStrip games={worstPlayer.games} warning />
                     </div>
-                    <span className="rounded bg-white px-2 py-1 text-xs font-black text-red-700">{worstPlayer.total}점</span>
                   </div>
                 </div>
               </InsightSection>
@@ -723,7 +748,7 @@ export default function HomePage() {
                 <p>지난 5일 기준 보너스 효율을 우선했습니다.</p>
               </AiRecommendationBox>
               <AiRecommendationBox coach="AI 타격코치 추천" title={`작전 2 후보는 ${aiStrategyTwo ? strategyCards[aiStrategyTwo.id].name : "추가 분석 필요"}`}>
-                <p>SOL 거래가 있으면 두 번째 작전으로 선택할 수 있습니다.</p>
+                <p>이번 달 SOL 거래가 있으면 두 번째 작전으로 선택할 수 있습니다.</p>
               </AiRecommendationBox>
               <section>
                 <p className="mb-2 text-sm font-black">작전 1</p>
@@ -753,8 +778,8 @@ export default function HomePage() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <p className="text-sm font-semibold text-slate-600">오늘은 SOL 거래가 없었네요. SOL 거래를 완료하면 작전을 하나 더 선택할 수 있습니다.</p>
-                    <button type="button" onClick={() => setSolTransactionToday(true)} className="w-full rounded-lg bg-sol p-3 font-black text-white">
+                    <p className="text-sm font-semibold text-slate-600">이번 달은 SOL 거래가 없었네요. 거래를 완료하면 작전을 하나 더 선택할 수 있습니다.</p>
+                    <button type="button" onClick={() => setSolTransactionThisMonth(true)} className="w-full rounded-lg bg-sol p-3 font-black text-white">
                       지금 SOL 거래하고 작전 2 열기
                     </button>
                   </div>

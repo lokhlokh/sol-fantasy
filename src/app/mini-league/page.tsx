@@ -60,7 +60,7 @@ const periodRewards: Record<
     note: "일간 보상권"
   },
   monthly: {
-    rewardText: "Top 10 단장님께 신한투자증권 주식매입 할인 쿠폰 10만원권을 수여하고, Top 100 단장님께 레전드 카드를 지급합니다.",
+    rewardText: "Top 10 단장님께 신한투자증권 주식매입 할인 쿠폰 10만원권을 수여하고, Top 100 단장님께 레전드 카드를 지급합니다. 레전드 카드를 3장 이상 모은 단장님은 다음 시즌 개막기념 미디어 데이에 VIP로 초청합니다.",
     rewardRank: 100,
     rewardName: "레전드 카드",
     topRewardRank: 10,
@@ -74,7 +74,7 @@ const periodRewards: Record<
     note: "월간 보상권"
   },
   season: {
-    rewardText: "Top3와 특별한 한분을 SOL 판타지리그 포스트 시즌 게임에 초대합니다.",
+    rewardText: "Top 3와 특별한 한분을 SOL 판타지리그 포스트 시즌 게임에 초대합니다.",
     rewardRank: 3,
     rewardName: "포스트시즌 SOL 판타지리그 좌석",
     base: 41800,
@@ -114,6 +114,21 @@ function SeasonTeamName({ teamId }: { teamId: TeamId }) {
     <span className="font-black" style={{ color: teamColor(teamId) }}>
       {teamName(teamId)}
     </span>
+  );
+}
+
+const rewardHighlightTerms = ["레전드 카드를 3장 이상", "최종 랭킹 1위", "Top 100", "Top 50", "Top 10", "Top 3"];
+const rewardHighlightPattern = new RegExp(`(${rewardHighlightTerms.join("|")})`, "g");
+
+function highlightRewardText(text: string): ReactNode {
+  return text.split(rewardHighlightPattern).map((part, index) =>
+    rewardHighlightTerms.includes(part) ? (
+      <strong key={`${part}-${index}`} className="font-black text-sol">
+        {part}
+      </strong>
+    ) : (
+      part
+    )
   );
 }
 
@@ -346,6 +361,7 @@ function FriendLeagueSection({ rows, leagueName, managerName, onOpenGuide }: { r
           <div>
             <p className="text-[10px] font-black tracking-[0.16em] text-amber-200">FRIENDS · NO MERCY</p>
             <h2 className="text-lg font-black text-white">{leagueName || defaultFriendLeagueName}</h2>
+            <p className="mt-1 text-sm font-black text-amber-100">우정처럼 쌓이는 금리</p>
             <p className="mt-1 text-xs font-semibold text-slate-200">주간 1위에게는 SOL 판타지 적금의 금리를 0.02%p 추가로 드리는 우대권을 부여합니다.</p>
           </div>
           <button type="button" onClick={onOpenGuide} className="shrink-0 rounded-md border border-white/20 bg-slate-950/75 px-3 py-2 text-xs font-black text-white shadow-lg backdrop-blur-sm">
@@ -398,11 +414,13 @@ function RewardRankingSection({
   topRewardGap?: number;
   customGapMessage?: (gap: number, mine: RankRow) => ReactNode;
 }) {
+  const gapMessage = gapText(mine, gap, rewardRank, rewardName, topRewardName, topRewardRank, topRewardGap, customGapMessage);
+
   return (
     <section className="rounded-lg border border-slate-200 p-3">
       <div className="mb-3">
         <h2 className="text-lg font-black text-ink">{title}</h2>
-        <p className="mt-1 text-xs font-semibold text-slate-500">{rewardText}</p>
+        <p className="mt-1 text-xs font-semibold text-slate-500">{typeof rewardText === "string" ? highlightRewardText(rewardText) : rewardText}</p>
       </div>
       <div className="space-y-2">
         {top3.map((row) => (
@@ -428,12 +446,12 @@ function RewardRankingSection({
                 </div>
                 <p className="text-sm font-black text-sol">{mine.score}점</p>
               </div>
-              <p className="mt-2 text-xs font-black leading-relaxed text-ink">{gapText(mine, gap, rewardRank, rewardName, topRewardName, topRewardRank, topRewardGap, customGapMessage)}</p>
+              <p className="mt-2 text-xs font-black leading-relaxed text-ink">{typeof gapMessage === "string" ? highlightRewardText(gapMessage) : gapMessage}</p>
             </div>
           </div>
         )}
         {top3.some((row) => row.isMe) && (
-          <p className="rounded-md bg-blue-50 p-3 text-xs font-black leading-relaxed text-ink">{gapText(mine, gap, rewardRank, rewardName, topRewardName, topRewardRank, topRewardGap, customGapMessage)}</p>
+          <p className="rounded-md bg-blue-50 p-3 text-xs font-black leading-relaxed text-ink">{typeof gapMessage === "string" ? highlightRewardText(gapMessage) : gapMessage}</p>
         )}
       </div>
     </section>
@@ -458,7 +476,7 @@ function RisingStarSection({ teamId }: { teamId: TeamId }) {
         <h2 className="text-lg font-black text-ink">
           <SeasonTeamName teamId={teamId} /> 라이징 스타 랭킹
         </h2>
-        <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-500">이번 달 가장 많이 선택한 {short} 선수 Top 3입니다. 가장 많은 단장이 선택한 선수에게 매달 100만원의 상금을 수여합니다.</p>
+        <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-500">{highlightRewardText(`이번 달 가장 많이 선택한 ${short} 선수 Top 3입니다. 가장 많은 단장이 선택한 선수에게 매달 100만원의 상금을 수여합니다.`)}</p>
       </div>
       <div className="space-y-2">
         {rows.map(({ player, picks, growth }, index) => (
@@ -487,7 +505,7 @@ function ShinhanEtfAdSection() {
     <section className="rounded-lg border border-slate-200 p-3">
       <div className="mb-3">
         <p className="text-xs font-black text-sol">신한투자증권</p>
-        <h2 className="text-lg font-black text-ink">최근 5일간 최대매출 ETF 랭킹 Top 3</h2>
+        <h2 className="text-lg font-black text-ink">{highlightRewardText("최근 5일간 최대매출 ETF 랭킹 Top 3")}</h2>
       </div>
       <div className="space-y-2">
         {etfTop3.map((etf, index) => (
@@ -564,7 +582,7 @@ export default function MiniLeaguePage() {
           {...season}
           rewardText={
             <>
-              <SeasonTeamName teamId={seasonTeamId} /> {season.rewardText} 최종 랭킹 1위 단장님은 <SeasonTeamName teamId={seasonTeamId} /> 스프링캠프 특별 게스트로 초청됩니다.
+              <SeasonTeamName teamId={seasonTeamId} /> {highlightRewardText(season.rewardText)} {highlightRewardText("최종 랭킹 1위")} 단장님은 <SeasonTeamName teamId={seasonTeamId} /> 스프링캠프 특별 게스트로 초청됩니다.
             </>
           }
           customGapMessage={(gap, mine) =>

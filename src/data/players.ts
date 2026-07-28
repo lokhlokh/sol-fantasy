@@ -2,6 +2,64 @@ import type { Player, Position, TeamId } from "@/types/domain";
 import { currentMockMarketWeek, weeklyMarketPriceStepStars } from "@/rules/marketRules";
 import { teams } from "./teams";
 
+// 2015년 통계청 인구주택총조사 기준 성씨 상위 25개와
+// 2025년 전국 남자 출생신고 이름 상위 25개를 같은 순서로 결합합니다.
+const commonKoreanSurnames = [
+  "김",
+  "이",
+  "박",
+  "최",
+  "정",
+  "강",
+  "조",
+  "윤",
+  "장",
+  "임",
+  "한",
+  "오",
+  "서",
+  "신",
+  "권",
+  "황",
+  "안",
+  "송",
+  "전",
+  "홍",
+  "유",
+  "고",
+  "문",
+  "양",
+  "손"
+] as const;
+
+const commonKoreanNames = [
+  "도윤",
+  "이준",
+  "하준",
+  "시우",
+  "도현",
+  "서준",
+  "선우",
+  "이안",
+  "태오",
+  "은우",
+  "도하",
+  "수호",
+  "이현",
+  "우주",
+  "지호",
+  "유준",
+  "은호",
+  "윤우",
+  "시윤",
+  "주원",
+  "연우",
+  "우진",
+  "예준",
+  "지한",
+  "이도"
+] as const;
+
 const positionPlan: Position[] = [
   "C",
   "C",
@@ -51,7 +109,10 @@ export const players: Player[] = teams.flatMap((team, teamIndex) =>
 
     return {
       id: `${team.id}-${serial}`,
-      name: `${team.shortName} 모의선수 ${serial}`,
+      name:
+        commonKoreanSurnames[index] && commonKoreanNames[index]
+          ? `${commonKoreanSurnames[index]}${commonKoreanNames[index]}`
+          : `${team.shortName} 모의선수 ${serial}`,
       teamId: team.id as TeamId,
       positions: extraPosition(primaryPosition, index),
       primaryPosition,

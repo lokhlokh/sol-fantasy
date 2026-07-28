@@ -49,7 +49,7 @@ function ToggleRow({ label, description, checked, onChange }: { label: string; d
 }
 
 export default function AdminPage() {
-  const { state, setFantasyTeamName, setManagerNickname, setSeasonTeamId, setSolTransactionToday, reset } = useLocalGameState();
+  const { state, setFantasyTeamName, setManagerNickname, setSeasonTeamId, setSolTransactionThisMonth, reset } = useLocalGameState();
   const [pushEnabled, setPushEnabled] = useState(true);
   const [marketingEnabled, setMarketingEnabled] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -69,7 +69,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     let active = true;
-    fetch("/legend-packages/index.json", { cache: "no-store" })
+    fetch("/legend-packages/index.json", { cache: "default" })
       .then((response) => (response.ok ? response.json() : { cards: [] }))
       .then((manifest: { cards?: unknown[] }) => {
         if (active) setFolderCardCount(manifest.cards?.length ?? 0);
@@ -161,12 +161,12 @@ export default function AdminPage() {
             <Link href="/cards" className="block rounded-md bg-sol p-3 text-center text-sm font-black text-white">레전드 카드 목록 보기</Link>
           </div>
         </SettingCard>
-        <SettingCard title="SOL 거래 혜택" description="오늘 SOL 거래가 있으면 작전 2를 추가로 선택할 수 있습니다.">
+        <SettingCard title="SOL 거래 혜택" description="이번 달 SOL 거래가 있으면 작전 2를 추가로 선택할 수 있습니다.">
           <ToggleRow
-            label="오늘 SOL 거래 완료"
-            description={state.hasSolTransactionToday ? "작전 2 선택권이 열려 있습니다." : "거래가 없으면 작전 2를 선택할 수 없습니다."}
-            checked={Boolean(state.hasSolTransactionToday)}
-            onChange={setSolTransactionToday}
+            label="이번 달 SOL 거래 완료"
+            description={state.hasSolTransactionThisMonth ? "작전 2 선택권이 열려 있습니다." : "이번 달 거래가 없으면 작전 2를 선택할 수 없습니다."}
+            checked={Boolean(state.hasSolTransactionThisMonth)}
+            onChange={setSolTransactionThisMonth}
           />
         </SettingCard>
 

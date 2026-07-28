@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { AppShell } from "@/components/AppShell";
 import { teams } from "@/data/teams";
 import { positionLabels } from "@/data/labels";
@@ -26,6 +27,7 @@ export default function CustomLegendCardPage() {
   const team = teams.find((item) => item.id === card.teamId);
   const position = positionLabels[card.position as keyof typeof positionLabels] || card.position;
   const profile = getCustomLegendProfile(card);
+  const isFolderCard = card.source === "folder";
   const gridStyle = { gridTemplateColumns: "54px repeat(7, minmax(0, 1fr))" };
 
   return (
@@ -34,7 +36,26 @@ export default function CustomLegendCardPage() {
         <Link href="/cards" className="inline-flex rounded-md border border-slate-200 px-3 py-2 text-sm font-bold">카드 목록으로</Link>
 
         <section className="rounded-lg bg-amber-50 p-3 shadow-soft">
-          <img src={card.portraitImage || card.cardImage} alt={`${card.name} 레전드 카드`} className="aspect-[3/4] w-full rounded-lg object-cover" />
+          {isFolderCard ? (
+            <Image
+              src={card.portraitImage || card.cardImage}
+              alt={`${card.name} 레전드 카드`}
+              width={1200}
+              height={1600}
+              sizes="(max-width: 448px) 100vw, 448px"
+              priority
+              className="aspect-[3/4] w-full rounded-lg object-cover"
+            />
+          ) : (
+            <img
+              src={card.portraitImage || card.cardImage}
+              alt={`${card.name} 레전드 카드`}
+              width={1200}
+              height={1600}
+              decoding="async"
+              className="aspect-[3/4] w-full rounded-lg object-cover"
+            />
+          )}
         </section>
 
         <section className="rounded-lg border border-amber-200 bg-white p-4">

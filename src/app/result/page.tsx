@@ -153,7 +153,7 @@ export default function ResultPage() {
 
   const effectiveLineup: Lineup = {
     ...state.lineup,
-    bonusStrategyCardId: state.hasSolTransactionToday ? state.bonusStrategyCardId ?? state.lineup.bonusStrategyCardId : undefined
+    bonusStrategyCardId: state.hasSolTransactionThisMonth ? state.bonusStrategyCardId ?? state.lineup.bonusStrategyCardId : undefined
   };
   const game = simulateGames(state.seed);
   const score = scoreLineup({ lineup: effectiveLineup, players, ...game });
@@ -245,45 +245,53 @@ export default function ResultPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto rounded-lg border border-slate-200">
-            <table className="w-full min-w-[720px] border-collapse text-left text-[11px]">
-              <thead className="bg-slate-50 text-slate-500">
-                <tr>
-                  <th className="px-2 py-2 font-black">선수</th>
-                  <th className="px-2 py-2 font-black">기록</th>
-                  <th className="px-2 py-2 text-right font-black">기본</th>
-                  <th className="px-2 py-2 text-right font-black">작전</th>
-                  <th className="px-2 py-2 text-right font-black">역할</th>
-                  <th className="px-2 py-2 text-right font-black">최종</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map(({ player, stats, breakdown }) => {
-                  if (!breakdown) return null;
-                  const labels = roleLabels(player.id, effectiveLineup);
-                  return (
-                    <tr key={player.id} className="border-t border-slate-200 align-top">
-                      <td className="w-36 px-2 py-2">
-                        <p className="font-black text-ink">{player.name}</p>
-                        <p className="font-semibold text-slate-500">{player.id}</p>
-                        <div className="mt-1 flex flex-wrap gap-1">
-                          {labels.map((label) => (
-                            <span key={label} className="rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-black text-sol">
-                              {label}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="px-2 py-2 font-semibold leading-relaxed text-slate-600">{statLine(stats)}</td>
-                      <td className="px-2 py-2 text-right font-black text-ink">{breakdown.baseScore}</td>
-                      <td className="px-2 py-2 text-right font-black text-ink">{signed(breakdown.strategyBonus)}</td>
-                      <td className="px-2 py-2 text-right font-black text-ink">{signed(roleInflation(breakdown))}</td>
-                      <td className="px-2 py-2 text-right font-black text-sol">{breakdown.finalScore}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          <div className="space-y-1.5 rounded-lg border border-slate-200 bg-slate-50/60 p-1.5">
+            <div className="flex items-center justify-between rounded-md bg-white px-1.5 py-1 text-[9px] font-black text-slate-500">
+              <span>선수 · 경기 기록</span>
+              <span>최종 점수</span>
+            </div>
+            {rows.map(({ player, stats, breakdown }) => {
+              if (!breakdown) return null;
+              const labels = roleLabels(player.id, effectiveLineup);
+              return (
+                <article key={player.id} className="rounded-md border border-slate-200 bg-white p-1.5 shadow-sm">
+                  <div className="flex items-center justify-between gap-1.5">
+                    <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden whitespace-nowrap">
+                      <p className="shrink-0 text-xs font-black text-ink">{player.name}</p>
+                      <p className="shrink-0 text-[9px] font-semibold text-slate-500">{player.id}</p>
+                      <div className="flex shrink-0 items-center gap-1">
+                        {labels.map((label) => (
+                          <span key={label} className="rounded-full bg-blue-50 px-1 py-0.5 text-[9px] font-black text-sol">
+                            {label}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex shrink-0 items-baseline gap-1 rounded-md bg-blue-50 px-2 py-0.5">
+                      <span className="text-[9px] font-black text-blue-500">총점</span>
+                      <strong className="text-base font-black leading-none text-sol">{breakdown.finalScore}점</strong>
+                    </div>
+                  </div>
+
+                  <p className="mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-[10px] font-semibold leading-4 text-slate-600">{statLine(stats)}</p>
+
+                  <div className="mt-1 grid grid-cols-3 gap-1 text-[9px] font-bold">
+                    <div className="flex items-center justify-between gap-1 rounded bg-slate-50 px-1.5 py-1 text-slate-500">
+                      <span>기본</span>
+                      <strong className="text-xs text-ink">{breakdown.baseScore}</strong>
+                    </div>
+                    <div className="flex items-center justify-between gap-1 rounded bg-slate-50 px-1.5 py-1 text-slate-500">
+                      <span>작전</span>
+                      <strong className="text-xs text-ink">{signed(breakdown.strategyBonus)}</strong>
+                    </div>
+                    <div className="flex items-center justify-between gap-1 rounded bg-slate-50 px-1.5 py-1 text-slate-500">
+                      <span>역할</span>
+                      <strong className="text-xs text-ink">{signed(roleInflation(breakdown))}</strong>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
 
@@ -303,11 +311,11 @@ export default function ResultPage() {
                     <p className="text-xs font-semibold text-slate-500">
                       {player.id} · {teamName(player.teamId)}
                     </p>
-                    <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-600">{statLine(stats)}</p>
                   </div>
                 </div>
                 <p className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-sm font-black text-ink">{baseScore}점</p>
               </div>
+              <p className="mt-1 whitespace-nowrap text-[10px] font-semibold tracking-tight text-slate-600">{statLine(stats)}</p>
             </article>
           ))}
         </section>
@@ -317,14 +325,48 @@ export default function ResultPage() {
             <h2 className="text-lg font-black text-ink">팀별 어제의 Top 3 단장</h2>
           </div>
           {top3BySeasonTeam.map(({ team, rows: teamRows }) => (
-            <article key={team.id} className="rounded-lg border border-slate-200 p-3">
-              <p className="mb-2 font-black text-ink">{team.name}</p>
+            <article
+              key={team.id}
+              className="overflow-hidden rounded-xl border bg-white p-3 shadow-sm"
+              style={{
+                borderColor: `${team.color}55`,
+                background: `linear-gradient(135deg, ${team.color}12 0%, #ffffff 48%)`
+              }}
+            >
+              <div className="mb-3 flex items-center justify-between border-b pb-2" style={{ borderColor: `${team.color}30` }}>
+                <div className="flex min-w-0 items-center gap-2">
+                  <span
+                    className="inline-flex h-7 min-w-10 items-center justify-center rounded-full px-2 text-[10px] font-black text-white"
+                    style={{ backgroundColor: team.color }}
+                  >
+                    {team.shortName}
+                  </span>
+                  <p className="truncate font-black text-ink">{team.name}</p>
+                </div>
+                <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: team.color }} aria-hidden="true" />
+              </div>
               <div className="space-y-2">
                 {teamRows.map((user, index) => (
-                  <div key={user.id} className="rounded-md bg-slate-50 p-2">
-                    <p className="text-sm font-black text-ink">
-                      {index + 1}. {user.nickname}(ID: {user.id}) {user.totalScore}점
-                    </p>
+                  <div
+                    key={user.id}
+                    className="rounded-md border border-l-4 p-2"
+                    style={{
+                      borderColor: `${team.color}25`,
+                      borderLeftColor: team.color,
+                      backgroundColor: `${team.color}0B`
+                    }}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="min-w-0 text-sm font-black text-ink">
+                        {index + 1}. {user.nickname}(ID: {user.id})
+                      </p>
+                      <span
+                        className="shrink-0 rounded-full px-2 py-0.5 text-xs font-black"
+                        style={{ color: team.color, backgroundColor: `${team.color}16` }}
+                      >
+                        {user.totalScore}점
+                      </span>
+                    </div>
                     <p className="mt-1 text-[11px] font-bold leading-relaxed text-slate-600">수훈선수: {user.contributors}</p>
                   </div>
                 ))}
