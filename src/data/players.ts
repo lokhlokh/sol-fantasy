@@ -3,7 +3,7 @@ import { currentMockMarketWeek, weeklyMarketPriceStepStars } from "@/rules/marke
 import { teams } from "./teams";
 
 // 2015년 통계청 인구주택총조사 기준 성씨 상위 25개와
-// 2025년 전국 남자 출생신고 이름 상위 25개를 같은 순서로 결합합니다.
+// 2025년 전국 남자·여자 출생신고 이름 상위 25개를 같은 순서로 결합합니다.
 const commonKoreanSurnames = [
   "김",
   "이",
@@ -60,7 +60,35 @@ const commonKoreanNames = [
   "이도"
 ] as const;
 
-const positionPlan: Position[] = [
+const commonKoreanFemaleNames = [
+  "서아",
+  "서윤",
+  "하린",
+  "이서",
+  "하윤",
+  "아린",
+  "지안",
+  "지유",
+  "아윤",
+  "시아",
+  "윤서",
+  "지아",
+  "지우",
+  "채이",
+  "유나",
+  "수아",
+  "채아",
+  "도아",
+  "예린",
+  "서하",
+  "유하",
+  "이솔",
+  "이나",
+  "윤슬",
+  "유주"
+] as const;
+
+const basePositionPlan: Position[] = [
   "C",
   "C",
   "C",
@@ -88,6 +116,9 @@ const positionPlan: Position[] = [
   "CORNER_OUTFIELD"
 ];
 
+// 팀별 25명에서 50명으로 확장합니다. 기존 포지션 분포를 한 번 더 사용해 균형을 유지합니다.
+const positionPlan: Position[] = [...basePositionPlan, ...basePositionPlan];
+
 const extraPosition = (primary: Position, index: number): Position[] => {
   if (index % 7 !== 0) return [primary];
   if (primary === "CENTER_INFIELD") return [primary, "CORNER_INFIELD"];
@@ -100,6 +131,9 @@ const extraPosition = (primary: Position, index: number): Position[] => {
 export const players: Player[] = teams.flatMap((team, teamIndex) =>
   positionPlan.map((primaryPosition, index) => {
     const serial = String(index + 1).padStart(2, "0");
+    const nameIndex = index % commonKoreanSurnames.length;
+    const surname = commonKoreanSurnames[nameIndex];
+    const givenName = index < commonKoreanNames.length ? commonKoreanNames[index] : commonKoreanFemaleNames[index - commonKoreanNames.length];
     const cheapCycle = index % 5 === 0 ? 2 : index % 9 === 0 ? 3 : 0;
     const priceStars = cheapCycle || (((teamIndex * 4 + index * 3) % 13) + 3);
     const recentForm = (teamIndex * 17 + index * 11) % 101;
@@ -109,10 +143,7 @@ export const players: Player[] = teams.flatMap((team, teamIndex) =>
 
     return {
       id: `${team.id}-${serial}`,
-      name:
-        commonKoreanSurnames[index] && commonKoreanNames[index]
-          ? `${commonKoreanSurnames[index]}${commonKoreanNames[index]}`
-          : `${team.shortName} 모의선수 ${serial}`,
+      name: `${surname}${givenName}`,
       teamId: team.id as TeamId,
       positions: extraPosition(primaryPosition, index),
       primaryPosition,
