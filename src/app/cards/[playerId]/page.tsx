@@ -42,6 +42,7 @@ function HansotDetail({ playerId }: { playerId: string }) {
               <p className="font-semibold text-slate-600">
                 {team?.name ?? progress.joinedTeamId} · {positionLabels[player.primaryPosition]}
               </p>
+              <p className="mt-1 text-xs font-black text-sol">매 경기 한솥밥 보너스 +{level}점</p>
             </div>
             <span className="rounded-md bg-ink px-3 py-2 text-sm font-black text-white">Lv.{level}</span>
           </div>
@@ -74,7 +75,7 @@ function HansotDetail({ playerId }: { playerId: string }) {
         <section className="rounded-lg border border-slate-200 p-4">
           <div className="mb-3">
             <h3 className="font-black">나와 함께 만든 실제 기록</h3>
-            <p className="mt-1 text-xs font-semibold text-slate-500">한솥밥 카드는 우리 팀에 합류한 뒤의 경기 기록과 보너스 이력을 함께 쌓습니다.</p>
+            <p className="mt-1 text-xs font-semibold text-slate-500">함께한 경기 20개마다 레벨이 오르고, 매 경기 레벨만큼 점수에 보너스가 더해집니다.</p>
           </div>
           {records.length > 0 ? (
             <div className="overflow-hidden rounded-lg border border-slate-200">

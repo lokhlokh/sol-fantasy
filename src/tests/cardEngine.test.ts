@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getCardLevel, nextCardGoal, type HansotProgress } from "@/engine/cardEngine";
+import { getCardLevel, getHansotBonus, nextCardGoal, type HansotProgress } from "@/engine/cardEngine";
 
 const progress = (overrides: Partial<HansotProgress>): HansotProgress => ({
   playerId: "x",
@@ -18,19 +18,21 @@ const progress = (overrides: Partial<HansotProgress>): HansotProgress => ({
 });
 
 describe("card engine", () => {
-  it("issues level 1 at 30 appearances", () => {
-    expect(getCardLevel(progress({ appearances: 30 }))).toBe(1);
+  it("increases one level for every 20 appearances", () => {
+    expect(getCardLevel(progress({ appearances: 20 }))).toBe(1);
+    expect(getCardLevel(progress({ appearances: 40 }))).toBe(2);
   });
 
-  it("levels to 2 at 50 appearances", () => {
-    expect(getCardLevel(progress({ appearances: 50 }))).toBe(2);
+  it("does not use captain picks for the level", () => {
+    expect(getCardLevel(progress({ appearances: 40, captainCount: 10 }))).toBe(2);
   });
 
-  it("levels to 3 at 10 captain picks", () => {
-    expect(getCardLevel(progress({ appearances: 50, captainCount: 10 }))).toBe(3);
+  it("uses the card level as the per-game bonus", () => {
+    expect(getHansotBonus("KIA-01")).toBe(1);
+    expect(getHansotBonus("UNKNOWN")).toBe(0);
   });
 
   it("describes next goal", () => {
-    expect(nextCardGoal(progress({ appearances: 20 }))).toContain("10회");
+    expect(nextCardGoal(progress({ appearances: 20 }))).toContain("20회");
   });
 });

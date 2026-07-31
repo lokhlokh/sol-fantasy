@@ -157,6 +157,7 @@ function HansotStoryCard({ playerId }: { playerId: string }) {
           <p className="mt-2 text-xs font-semibold leading-relaxed text-slate-600">
             우리 팀에서 {progress.appearances}경기, {progress.hitsForTeam}안타, {progress.homeRunsForTeam}홈런을 함께 만들었습니다.
           </p>
+          <p className="mt-1 text-xs font-black text-sol">매 경기 한솥밥 보너스 +{level}점</p>
         </div>
       </div>
       <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs font-bold">
@@ -234,7 +235,7 @@ export default function CardsPage() {
             <p className="text-xs font-black text-sol">함께 만들어서 더욱 소중해</p>
             <h2 className="text-xl font-black text-ink">한솥밥 카드</h2>
             <p className="mt-1 text-sm font-semibold text-slate-600">
-              한솥밥 카드는 나와 우리 팀에서 뛴 기록, 역할, 가치 상승을 중심으로 성장합니다.
+              우리 팀에서 함께 뛴 경기 20개마다 레벨이 오르고, 매 경기 레벨만큼 한솥밥 보너스 점수를 얻습니다.
             </p>
           </div>
           <div className="space-y-3">

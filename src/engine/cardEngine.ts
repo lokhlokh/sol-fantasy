@@ -32,18 +32,13 @@ export type HansotProgress = {
 };
 
 export function getCardLevel(progress: HansotProgress) {
-  if (progress.captainCount >= 10) return 3;
-  if (progress.appearances >= 50) return 2;
-  if (progress.appearances >= 30) return 1;
-  return 0;
+  return Math.floor(progress.appearances / 20);
 }
 
 export function nextCardGoal(progress: HansotProgress) {
   const level = getCardLevel(progress);
-  if (level === 0) return `카드 발급까지 출장 ${30 - progress.appearances}회 남음`;
-  if (level === 1) return `Lv.2까지 출장 ${50 - progress.appearances}회 남음`;
-  if (level === 2) return `Lv.3까지 캡틴 지정 ${10 - progress.captainCount}회 남음`;
-  return "최고 레벨 달성";
+  const nextLevel = level + 1;
+  return `Lv.${nextLevel}까지 출장 ${nextLevel * 20 - progress.appearances}회 남음`;
 }
 
 export const mockCardProgress: HansotProgress[] = [
@@ -119,4 +114,9 @@ export const mockCardProgress: HansotProgress[] = [
 
 export function getCardProgress(playerId: string) {
   return mockCardProgress.find((progress) => progress.playerId === playerId);
+}
+
+export function getHansotBonus(playerId: string) {
+  const progress = getCardProgress(playerId);
+  return progress ? getCardLevel(progress) : 0;
 }

@@ -1,5 +1,6 @@
 import type { HitterDailyStats, Lineup, Player, PlayerScoreBreakdown, StrategyCardId, TeamId, TeamMoundResult } from "@/types/domain";
 import { hitterScoring, strategyBonusCap } from "@/rules/scoringRules";
+import { getHansotBonus } from "@/engine/cardEngine";
 
 export function calculateHitterBaseScore(stats: HitterDailyStats): number {
   if (!stats.played) return 0;
@@ -84,6 +85,7 @@ export function scoreLineup(params: {
     const rawStrategyBonus = calculatePlayerStrategyBonus(player, stats, baseScore, params.lineup);
     const strategyBonus = Math.min(remainingStrategyCap, rawStrategyBonus);
     remainingStrategyCap -= strategyBonus;
+    const hansotBonus = stats.played ? getHansotBonus(player.id) : 0;
     const multiplier =
       player.id === params.lineup.captainId ? 2 : player.id === params.lineup.viceCaptainId && !captainPlayed ? 2 : player.id === params.lineup.viceCaptainId ? 1.5 : 1;
 
@@ -91,8 +93,9 @@ export function scoreLineup(params: {
       playerId: player.id,
       baseScore,
       strategyBonus,
+      hansotBonus,
       multiplier,
-      finalScore: Math.ceil((baseScore + strategyBonus) * multiplier),
+      finalScore: Math.ceil((baseScore + strategyBonus) * multiplier) + hansotBonus,
       played: stats.played
     };
   });

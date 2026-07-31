@@ -554,7 +554,7 @@ function ManagerManual({
       <section className="rounded-lg border border-slate-200 p-3">
         <h4 className="font-black text-ink">기록별 포인트</h4>
         <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-500">
-          선수 기록 점수에 작전 보너스가 더해지고, 캡틴·부캡틴 보너스가 최종 점수에 반영됩니다.
+          선수 기록 점수에 작전·한솥밥 보너스가 더해지고, 캡틴·부캡틴 보너스가 최종 점수에 반영됩니다.
         </p>
         <div className="mt-3 grid grid-cols-2 gap-2">
           {hitterPointRows.map((row) => (

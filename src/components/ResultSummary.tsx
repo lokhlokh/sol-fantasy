@@ -14,7 +14,7 @@ export function ResultSummary({ total, aiTotal, rows }: { total: number; aiTotal
           <p className="text-3xl font-black">{aiTotal}</p>
         </div>
       </div>
-      <p className="mt-3 text-sm text-blue-100">아래 상세에는 캡틴·부캡틴과 작전 카드 효과가 포함되어 있습니다.</p>
+      <p className="mt-3 text-sm text-blue-100">아래 상세에는 캡틴·부캡틴, 작전 카드, 한솥밥 카드 효과가 포함되어 있습니다.</p>
       <div className="mt-3 max-h-52 overflow-auto rounded-md bg-white/10">
         {rows.map((row) => (
           <div key={row.playerId} className="flex justify-between border-b border-white/10 px-3 py-2 text-sm last:border-b-0">

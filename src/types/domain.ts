@@ -85,6 +85,7 @@ export type PlayerScoreBreakdown = {
   playerId: string;
   baseScore: number;
   strategyBonus: number;
+  hansotBonus: number;
   multiplier: number;
   finalScore: number;
   played: boolean;

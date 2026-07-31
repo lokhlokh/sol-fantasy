@@ -78,7 +78,7 @@ function roleLabels(playerId: string, lineup: Lineup) {
 }
 
 function roleInflation(row: PlayerScoreBreakdown) {
-  const beforeRole = Math.ceil(row.baseScore + row.strategyBonus);
+  const beforeRole = Math.ceil(row.baseScore + row.strategyBonus) + row.hansotBonus;
   return Math.max(0, row.finalScore - beforeRole);
 }
 
@@ -275,7 +275,7 @@ export default function ResultPage() {
 
                   <p className="mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-[10px] font-semibold leading-4 text-slate-600">{statLine(stats)}</p>
 
-                  <div className="mt-1 grid grid-cols-3 gap-1 text-[9px] font-bold">
+                  <div className="mt-1 grid grid-cols-4 gap-1 text-[9px] font-bold">
                     <div className="flex items-center justify-between gap-1 rounded bg-slate-50 px-1.5 py-1 text-slate-500">
                       <span>기본</span>
                       <strong className="text-xs text-ink">{breakdown.baseScore}</strong>
@@ -283,6 +283,10 @@ export default function ResultPage() {
                     <div className="flex items-center justify-between gap-1 rounded bg-slate-50 px-1.5 py-1 text-slate-500">
                       <span>작전</span>
                       <strong className="text-xs text-ink">{signed(breakdown.strategyBonus)}</strong>
+                    </div>
+                    <div className="flex items-center justify-between gap-1 rounded bg-blue-50 px-1.5 py-1 text-sol">
+                      <span>한솥밥</span>
+                      <strong className="text-xs">{signed(breakdown.hansotBonus)}</strong>
                     </div>
                     <div className="flex items-center justify-between gap-1 rounded bg-slate-50 px-1.5 py-1 text-slate-500">
                       <span>역할</span>
