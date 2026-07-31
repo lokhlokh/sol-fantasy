@@ -444,12 +444,20 @@ function ManagerManual({
   onComplete: () => void;
 }) {
   const steps = [
-    { title: "1. 단장 프로필을 정합니다", body: "처음에는 단장 이름, 구단명, 시즌팀을 정합니다. 이후에는 하단 설정 메뉴에서 언제든 다시 바꿀 수 있습니다." },
-    { title: "2. 라인업을 구성합니다", body: "포수, 내야, 외야 슬롯에 8명을 채우고 캡틴(포인트x2), 부캡틴(x1.5)을 지정합니다. 부상 선수가 있으면 시합 전 교체해서 대체선수로 포인트를 획득합니다." },
-    { title: "3. 오늘의 작전을 선택합니다", body: "작전 1은 기본 선택이고, 이번 달 SOL 거래를 완료하면 작전을 하나 더 선택할 수 있습니다. AI 코치 추천을 참고해 보너스가 큰 작전을 고릅니다." },
-    { title: "4. 오늘의 마운드를 고릅니다", body: "10개 팀의 오늘 상대와 지난 5일간 기록을 보고, 우리 점수에 가장 도움이 될 마운드를 선택합니다." },
-    { title: "6. 리그 랭킹과 친구 미니리그에 도전합니다", body: "일별, 월별, 시즌별 랭킹에서 상품을 노리고, 친구 미니리그에서는 순위 변화 그래프로 경쟁 흐름을 확인합니다." },
-    { title: "7. 야구지식과 보상을 함께 겨룹니다", body: "선수 컨디션, 상대 팀, 작전 궁합을 읽는 야구지식이 좋은 라인업으로 이어지고, 좋은 라인업은 보상권에 가까워집니다." },
+    { title: "1. 단장 프로필을 정합니다 (덕아웃 섹션)", body: "처음에는 단장 이름, 구단명, 시즌팀을 정합니다. 이후에는 하단 설정 메뉴에서 언제든 다시 바꿀 수 있습니다." },
+    { title: "2. 라인업을 구성합니다 (라인업 섹션)", body: "포수, 내야, 외야 슬롯에 8명을 채우고 캡틴(포인트x2), 부캡틴(x1.5)을 지정합니다. 부상 선수가 있으면 시합 전 교체해서 대체선수로 포인트를 획득합니다." },
+    { title: "3. 오늘의 작전을 선택합니다 (덕아웃 섹션)", body: "덕아웃의 오늘의 작전에서 작전 1은 기본 선택이고, 이번 달 SOL 거래를 완료하면 작전을 하나 더 선택할 수 있습니다. AI 코치 추천을 참고해 보너스가 큰 작전을 고릅니다." },
+    { title: "4. 오늘의 마운드를 고릅니다 (덕아웃 섹션)", body: "덕아웃의 오늘의 마운드에서 10개 팀의 오늘 상대와 지난 5일간 기록을 보고, 우리 점수에 가장 도움이 될 마운드를 선택합니다." },
+    { title: "6. 리그 랭킹과 친구 미니리그에 도전합니다 (리그 랭킹 섹션)", body: "리그 랭킹 섹션의 일별·월별·시즌별 랭킹에서 상품을 노리고, 친구 미니리그에서는 순위 변화 그래프로 경쟁 흐름을 확인합니다." },
+  ];
+  const rewardRows = [
+    { title: "일간 랭킹 Top 30", description: "땡겨요 쿠폰 5천원권", section: "리그 랭킹" },
+    { title: "월간 랭킹 Top 10", description: "신한투자증권 주식매입 할인 쿠폰 10만원권", section: "리그 랭킹" },
+    { title: "월간 랭킹 Top 100", description: "디지털 레전드 카드와 실물 카드 3장", section: "리그 랭킹·선수카드" },
+    { title: "레전드 카드 3장 이상", description: "다음 시즌 개막기념 미디어 데이 VIP 초청", section: "선수카드" },
+    { title: "시즌 랭킹 Top 3", description: "포스트 시즌 SOL 판타지리그 초대", section: "리그 랭킹" },
+    { title: "시즌 최종 랭킹 1위", description: "시즌팀 스프링캠프 특별 게스트 초청", section: "리그 랭킹" },
+    { title: "친구 미니리그 주간 1위", description: "SOL 판타지 적금 금리 0.02%p 우대권(누적)", section: "리그 랭킹" },
   ];
   const hitterPointRows = [
     { label: "단타", value: hitterScoring.singles },
@@ -518,6 +526,30 @@ function ManagerManual({
           <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-600">{step.body}</p>
         </section>
       ))}
+
+      <section className="rounded-lg border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-3">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-black tracking-[0.08em] text-sol">REWARDS</p>
+            <h4 className="mt-1 font-black text-ink">보상 안내</h4>
+          </div>
+          <span className="rounded-full bg-white px-2 py-1 text-[10px] font-black text-sol">랭킹·미니리그</span>
+        </div>
+        <p className="mt-2 text-xs font-semibold leading-relaxed text-slate-600">
+          선택한 팀별 랭킹과 친구 미니리그에서 순위를 다투고 멋진 상품을 획득하세요
+        </p>
+        <div className="mt-3 space-y-2">
+          {rewardRows.map((row) => (
+            <div key={row.title} className="flex items-center justify-between gap-3 rounded-md bg-white px-3 py-2 shadow-sm">
+              <div className="min-w-0">
+                <p className="text-xs font-black text-ink">{row.title}</p>
+                <p className="mt-0.5 text-xs font-semibold leading-relaxed text-slate-600">{row.description}</p>
+              </div>
+              <span className="shrink-0 rounded-full bg-blue-50 px-2 py-1 text-[10px] font-black text-sol">{row.section}</span>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section className="rounded-lg border border-slate-200 p-3">
         <h4 className="font-black text-ink">기록별 포인트</h4>

@@ -48,9 +48,9 @@ const periodRewards: Record<
   }
 > = {
   daily: {
-    rewardText: "Top 50 단장님께 땡겨요 상품권을 드립니다.",
-    rewardRank: 50,
-    rewardName: "땡겨요 상품권",
+    rewardText: "Top 30 단장님께 땡겨요 쿠폰 5천원권을 드립니다.",
+    rewardRank: 30,
+    rewardName: "땡겨요 쿠폰 5천원권",
     base: 187,
     topStep: 9,
     tailStart: 168,
@@ -117,7 +117,7 @@ function SeasonTeamName({ teamId }: { teamId: TeamId }) {
   );
 }
 
-const rewardHighlightTerms = ["레전드 카드를 3장 이상", "최종 랭킹 1위", "Top 100", "Top 50", "Top 10", "Top 3"];
+const rewardHighlightTerms = ["레전드 카드를 3장 이상", "최종 랭킹 1위", "Top 100", "Top 30", "Top 10", "Top 3"];
 const rewardHighlightPattern = new RegExp(`(${rewardHighlightTerms.join("|")})`, "g");
 
 function highlightRewardText(text: string): ReactNode {
